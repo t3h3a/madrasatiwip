@@ -1,0 +1,528 @@
+/* ===========================================
+   صفحة حاسبة BTEC الجديدة
+   نفس تجربة AF BTEC مع ألوان المدرسة
+=========================================== */
+
+:root {
+    --main-blue: var(--accent-primary, #2563eb);
+    --dark-blue: color-mix(in srgb, var(--accent-primary, #2563eb) 80%, #0b1a4a 20%);
+    --accent: var(--accent-secondary, #f97316);
+    --surface: var(--surface-card, #ffffff);
+    --muted: #64748b;
+    --border: var(--border-color, #e2e8f0);
+    --shadow-lg: 0 30px 60px rgba(15, 23, 42, 0.08);
+}
+
+.calculator-shell {
+    padding: 120px 0 80px;
+    background: linear-gradient(180deg, var(--bg-gradient-from, #f7f9ff), var(--bg-gradient-to, #eef2ff));
+    min-height: 100vh;
+    color: #0f172a;
+}
+
+.hero-card {
+    background: linear-gradient(135deg, var(--main-blue), var(--dark-blue));
+    color: #fff;
+    border-radius: 26px;
+    padding: 34px;
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    box-shadow: var(--shadow-lg);
+}
+
+.hero-eyebrow {
+    margin: 0;
+    letter-spacing: 3px;
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+
+.hero-card h1 {
+    margin: 10px 0 12px;
+    font-size: 2.4rem;
+    font-weight: 800;
+}
+
+.hero-text {
+    margin: 0;
+    line-height: 1.8;
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.85);
+}
+
+.hero-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    font-weight: 600;
+}
+
+.hero-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.hero-link:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.mode-tabs {
+    margin: 26px 0;
+    background: var(--surface-card, #fff);
+    border-radius: 999px;
+    padding: 6px;
+    display: flex;
+    gap: 6px;
+    box-shadow: 0 18px 30px rgba(37,99,235,0.15);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.tab-button {
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.tab-button.active {
+    background: linear-gradient(120deg, var(--main-blue), var(--dark-blue));
+    color: #fff;
+    box-shadow: 0 12px 25px rgba(29,78,216,0.25);
+}
+
+.calculator-grid {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 32px;
+    align-items: flex-start;
+}
+
+.info-column {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.info-card {
+    background: var(--surface);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    box-shadow: 0 15px 30px rgba(15,23,42,0.04);
+    color: #0f172a;
+}
+
+.info-card h3 {
+    margin: 0 0 12px;
+    color: var(--main-blue);
+    font-size: 1.1rem;
+}
+
+.info-card ul {
+    margin: 0;
+    padding: 0 18px 0 0;
+    color: var(--muted);
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+.info-card.gradient {
+    background: linear-gradient(140deg, var(--main-blue), #0ea5e9);
+    color: #fff;
+    border: none;
+}
+
+.info-card.gradient h3,
+.info-card.gradient span {
+    color: #fff;
+}
+
+.info-card.gradient ul {
+    color: rgba(255,255,255,0.9);
+}
+
+/* استثناء بطاقة سلم التقديرات حتى يكون النص داكن في النهار */
+.info-card.gradient.grade-scale-card,
+.info-card.gradient.grade-scale-card h3,
+.info-card.gradient.grade-scale-card span,
+.info-card.gradient.grade-scale-card ul,
+.info-card.gradient.grade-scale-card li {
+    color: #0f172a !important;
+}
+
+/* بطاقة سلم التقديرات – ظل متحرك جذاب */
+.info-card.grade-scale-card {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    border: none;
+    background: #ffffff;
+    color: #0f172a;
+}
+
+.info-card.grade-scale-card h3,
+.info-card.grade-scale-card ul,
+.info-card.grade-scale-card li,
+.info-card.grade-scale-card span,
+.info-card.grade-scale-card .grade-scale span {
+    color: #0f172a !important;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+}
+
+.info-card.grade-scale-card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: conic-gradient(
+        from 0deg,
+        rgba(37, 99, 235, 0.95),
+        rgba(14, 165, 233, 0.85),
+        rgba(37, 99, 235, 0.95)
+    );
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: spinBorder 6s linear infinite;
+    z-index: 0;
+}
+
+.info-card.grade-scale-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes spinBorder {
+    to { transform: rotate(360deg); }
+}
+
+.grade-scale {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.grade-scale span {
+    background: rgba(255,255,255,0.15);
+    padding: 8px 12px;
+    border-radius: 10px;
+    color: inherit;
+}
+
+.tracks-column {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.track-panel {
+    background: var(--surface-card, #fff);
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    padding: 26px;
+    box-shadow: var(--shadow-lg);
+    display: none;
+}
+
+.track-panel.active {
+    display: block;
+    animation: fadeIn 0.35s ease;
+}
+
+.panel-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.panel-label {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.panel-head h2 {
+    margin: 4px 0 0;
+    font-size: 1.6rem;
+    color: #0f172a;
+}
+
+.panel-badge {
+    background: rgba(37,99,235,0.1);
+    color: var(--main-blue);
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+.course-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.course-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) 48px;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--surface-muted, #f8fafc);
+}
+
+.input-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-field label {
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.input-field input,
+.input-field select {
+    border: 1px solid color-mix(in srgb, var(--main-blue), #cbd5f5);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    background: #fff;
+    transition: 0.2s;
+}
+
+.input-field input:focus,
+.input-field select:focus {
+    border-color: var(--main-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    outline: none;
+}
+
+.delete-row {
+    border: none;
+    border-radius: 12px;
+    background: #fee2e2;
+    color: #dc2626;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.delete-row:hover {
+    background: #fecaca;
+}
+
+.panel-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.outline-btn {
+    border: 1px solid var(--main-blue);
+    color: var(--main-blue);
+    background: transparent;
+    border-radius: 12px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.2s;
+}
+
+.outline-btn:hover {
+    background: rgba(37,99,235,0.08);
+}
+
+.track-result {
+    margin-top: 18px;
+    padding: 18px;
+    border-radius: 14px;
+    background: #eff6ff;
+    color: #0f172a;
+    font-weight: 600;
+    border: 1px solid rgba(37,99,235,0.2);
+}
+
+.track-result.error {
+    background: #fee2e2;
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.shared-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.shared-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 14px;
+    padding: 18px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: #f8fafc;
+}
+
+.shared-row strong {
+    display: block;
+    font-size: 1.1rem;
+    color: #0f172a;
+}
+
+.shared-row small {
+    color: var(--muted);
+}
+
+.final-card {
+    margin-top: 32px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: center;
+}
+
+.final-card h3 {
+    margin: 0 0 8px;
+}
+
+.breakdown-list {
+    margin: 12px 0 0;
+    padding: 0 18px 0 0;
+    color: var(--muted);
+    line-height: 1.8;
+}
+
+.primary-btn {
+    border: none;
+    border-radius: 16px;
+    padding: 14px 26px;
+    background: linear-gradient(120deg, var(--accent), #ea580c);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    box-shadow: 0 20px 35px rgba(249,115,22,0.35);
+    transition: 0.25s;
+    animation: floatButton 4s ease-in-out infinite;
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(8px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+@keyframes floatButton {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(0); }
+}
+
+@media (max-width: 1100px) {
+    .calculator-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-column {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .info-card {
+        flex: 1 1 280px;
+    }
+}
+
+@media (max-width: 820px) {
+    .hero-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .mode-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        border-radius: 20px;
+        padding: 6px 10px;
+        justify-content: flex-start;
+    }
+
+    .mode-tabs::-webkit-scrollbar {
+        height: 0;
+    }
+
+    .tab-button {
+        flex: 0 0 200px;
+        text-align: center;
+    }
+
+    .course-row {
+        grid-template-columns: 1fr;
+    }
+
+    .shared-row {
+        grid-template-columns: 1fr;
+    }
+
+    .final-card {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+@media (max-width: 540px) {
+    .calculator-shell {
+        padding: 110px 0 60px;
+    }
+
+    .hero-card {
+        padding: 24px;
+    }
+
+    .track-panel {
+        padding: 20px;
+    }
+
+    .outline-btn,
+    .primary-btn {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+}

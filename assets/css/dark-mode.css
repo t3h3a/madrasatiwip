@@ -1,0 +1,535 @@
+/* =========================
+   وضع داكن/فاتح (Dark/Light Mode)
+========================= */
+
+/* متغيرات الوضع الفاتح */
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f7fa;
+    --bg-tertiary: #f8fafc;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --border-color: rgba(0,0,0,0.08);
+    --shadow: rgba(0,0,0,0.05);
+    --header-bg: rgba(255,255,255,0.90);
+}
+
+/* متغيرات الوضع الداكن */
+[data-theme="dark"] {
+    --bg-primary: #000000;              /* خلفية سوداء خالصة */
+    --bg-secondary: #0d1117;            /* طبقة داكنة للكروت */
+    --bg-tertiary: #111827;
+    --text-primary: #ffffff;            /* نص أبيض */
+    --text-secondary: #e5e7eb;          /* نص فاتح */
+    --text-muted: #cbd5e1;
+    --border-color: rgba(255,255,255,0.15);
+    --shadow: rgba(0,0,0,0.6);
+    --header-bg: rgba(0,0,0,0.88);
+    /* نسخة الألوان للوضع الداكن - تبقى الألوان المميزة */
+    --accent-orange: #ffb86c;
+    --accent-orange-strong: #ff9b4d;
+    --accent-blue: #7fb4ff;
+    --accent-blue-strong: #4b8dff;
+    --kw-bg-orange: rgba(255, 184, 108, 0.18);
+    --kw-bg-blue: rgba(127, 180, 255, 0.22);
+    --kw-border: rgba(255, 255, 255, 0.12);
+}
+
+/* تطبيق الألوان على body */
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] body {
+    background: #000 !important;
+    color: #fff !important;
+}
+
+/* قفل ألوان النص الأساسية في الوضع الداكن لتبقى مقروءة */
+[data-theme="dark"] body,
+[data-theme="dark"] p,
+[data-theme="dark"] li,
+[data-theme="dark"] .section-desc,
+[data-theme="dark"] .section-subtitle,
+[data-theme="dark"] .hero-subtitle {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6,
+[data-theme="dark"] .section-title {
+    color: var(--text-primary) !important;
+}
+
+/* زر التبديل */
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.theme-toggle:hover {
+    background: var(--bg-secondary);
+    transform: scale(1.1);
+}
+
+.theme-toggle i {
+    transition: transform 0.5s ease, opacity 0.3s ease;
+    position: absolute;
+}
+
+/* أنيميشن الشمس */
+.theme-toggle .fa-sun {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+    animation: sunRotate 3s linear infinite;
+}
+
+[data-theme="dark"] .theme-toggle .fa-sun {
+    transform: rotate(90deg) scale(0);
+    opacity: 0;
+    animation: none;
+}
+
+/* أنيميشن القمر */
+.theme-toggle .fa-moon {
+    transform: rotate(-90deg) scale(0);
+    opacity: 0;
+    animation: none;
+}
+
+[data-theme="dark"] .theme-toggle .fa-moon {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+    animation: moonRotate 3s linear infinite;
+}
+
+@keyframes sunRotate {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes moonRotate {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(-180deg) scale(1.1); }
+    100% { transform: rotate(-360deg) scale(1); }
+}
+
+/* تعديل الهيدر */
+.main-header {
+    background: var(--header-bg) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+.brand-top {
+    color: var(--text-primary) !important;
+}
+
+.brand-sub {
+    color: var(--text-secondary) !important;
+}
+
+.main-nav a {
+    color: var(--text-secondary) !important;
+}
+
+.main-nav a:hover {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+.main-nav a.active {
+    background: var(--accent-primary, #2563eb) !important;
+    color: #fff !important;
+}
+
+.nav-toggle {
+    color: var(--text-primary) !important;
+}
+
+/* نافذة الإعدادات في الوضع الداكن */
+[data-theme="dark"] .settings-panel {
+    background: #0f172a;
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .settings-group {
+    background: #111827;
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .palette-card {
+    background: #0b1220;
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .palette-card span {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .settings-note {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .settings-overlay {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* محول حجم الخط في الوضع الداكن */
+[data-theme="dark"] .font-size-toggle {
+    background: transparent !important;
+}
+
+[data-theme="dark"] .font-size-toggle .fs-trigger {
+    background: rgba(255,255,255,0.06) !important;
+    border-color: rgba(255,255,255,0.12) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .font-size-toggle .fs-menu {
+    background: #0f172a !important;
+    border-color: rgba(255,255,255,0.12) !important;
+    box-shadow: 0 14px 32px rgba(0,0,0,0.35) !important;
+}
+
+[data-theme="dark"] .font-size-toggle .fs-option {
+    color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .font-size-toggle .fs-option.active {
+    background: var(--accent-primary, #2563eb) !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .font-size-toggle .fs-option:hover {
+    background: var(--accent-soft, rgba(37,99,235,0.18)) !important;
+}
+
+/* تعديل الفوتر */
+.main-footer {
+    background: var(--bg-secondary) !important;
+    color: var(--text-secondary) !important;
+    border-top: 1px solid var(--border-color) !important;
+}
+
+/* الروابط في الوضع الداكن */
+[data-theme="dark"] a {
+    color: var(--accent-blue);
+}
+[data-theme="dark"] a:hover {
+    color: var(--accent-orange);
+}
+
+/* تباين الكلمات المميزة للوضع الداكن */
+[data-theme="dark"] .kw-btec,
+[data-theme="dark"] .kw-pearson {
+    box-shadow: none;
+    background: none;
+}
+
+/* تعديل البطاقات */
+.feature-card,
+.info-card,
+.major-card,
+.level-box,
+.project-card,
+.gallery-card,
+.social-card {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: 0 6px 20px var(--shadow) !important;
+}
+
+/* نصوص داخل الكروت تكون واضحة */
+[data-theme="dark"] .feature-card p,
+[data-theme="dark"] .info-card p,
+[data-theme="dark"] .major-card p,
+[data-theme="dark"] .level-box p,
+[data-theme="dark"] .project-card p,
+[data-theme="dark"] .gallery-card p,
+[data-theme="dark"] .social-card p {
+    color: var(--text-secondary) !important;
+}
+
+/* تعديل النصوص */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+}
+
+p {
+    color: var(--text-secondary);
+}
+
+/* نصوص الهيرو والإنجازات في الصفحة الرئيسية */
+[data-theme="dark"] .hero-content h1,
+[data-theme="dark"] .section-achievements .ach-text h2 {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .hero-content p,
+[data-theme="dark"] .section-achievements .ach-text p {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .section-achievements .stat-line {
+    color: #f8fafc !important;
+}
+
+/* تعديل الحقول */
+input, textarea, select {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* تعديل الأزرار */
+.btn-primary,
+.btn-ghost,
+.hero-btn {
+    transition: all 0.3s ease;
+}
+
+/* تعديل صفحة BTEC */
+.btec-hero .overlay {
+    background: rgba(0,0,0,0.55) !important;
+}
+
+[data-theme="dark"] .btec-hero .overlay {
+    background: rgba(0,0,0,0.7) !important;
+}
+
+/* تعديل صفحة المعرض */
+.gallery-section {
+    background: var(--bg-primary) !important;
+}
+
+/* تعديل صفحة المساعد الذكي */
+[data-theme="dark"] .ai-bg {
+    opacity: 0.8;
+}
+
+[data-theme="dark"] .ai-chat-container {
+    background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(15,23,42,0.95)) !important;
+}
+/* (keyword classes moved to style.css for global scope) */
+
+/* الصفحة الرئيسية في الوضع الداكن */
+[data-theme="dark"] .hero,
+[data-theme="dark"] .features,
+[data-theme="dark"] .about,
+[data-theme="dark"] .social-section {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .hero-overlay {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.95)) !important;
+}
+
+[data-theme="dark"] .hero-content h1,
+[data-theme="dark"] .hero-content p {
+    color: #fff !important;
+}
+
+[data-theme="dark"] .hero-buttons .btn-primary,
+[data-theme="dark"] .btn-orange {
+    color: #fff !important;
+}
+
+[data-theme="dark"] .section-subtitle {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .section-title {
+    color: #fff !important;
+}
+
+/* صفحة الفيديوهات التوعوية */
+[data-theme="dark"] .videos-page,
+[data-theme="dark"] .videos-page .section-title,
+[data-theme="dark"] .videos-page .section-subtitle {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .videos-page .section-subtitle {
+    opacity: 1 !important;
+}
+
+[data-theme="dark"] .videos-bg {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%) !important;
+}
+
+[data-theme="dark"] .video-card p {
+    color: #e5e7eb !important;
+}
+
+/* -----------------------------
+   وضع داكن لصفحة الحاسبة BTEC
+----------------------------- */
+[data-theme="dark"] .calculator-shell {
+    background: #0b1220 !important;
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .hero-card {
+    background: linear-gradient(135deg, #1d4ed8, #0ea5e9) !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .hero-text,
+[data-theme="dark"] .hero-actions a {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .mode-tabs {
+    background: rgba(15, 23, 42, 0.85) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .tab-button {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .tab-button.active {
+    background: linear-gradient(120deg, #2563eb, #1e88ff) !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .info-card {
+    background: #0f172a !important;
+    border-color: var(--border-color) !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
+}
+
+[data-theme="dark"] .info-card h3 {
+    color: #7fb4ff !important;
+}
+
+[data-theme="dark"] .info-card ul {
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .info-card.grade-scale-card {
+    background: #0f172a !important;
+}
+
+[data-theme="dark"] .info-card.grade-scale-card::before {
+    background: conic-gradient(
+        from 0deg,
+        rgba(127, 180, 255, 0.8),
+        rgba(78, 129, 255, 0.8),
+        rgba(127, 180, 255, 0.8)
+    );
+}
+
+[data-theme="dark"] .info-card.gradient {
+    background: linear-gradient(140deg, #1e88ff, #2563eb) !important;
+}
+
+[data-theme="dark"] .info-card.grade-scale-card {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .info-card.grade-scale-card h3,
+[data-theme="dark"] .info-card.grade-scale-card ul,
+[data-theme="dark"] .info-card.grade-scale-card li,
+[data-theme="dark"] .info-card.grade-scale-card span,
+[data-theme="dark"] .info-card.grade-scale-card .grade-scale span {
+    color: #f8fafc !important;
+    font-weight: 700;
+}
+
+[data-theme="dark"] .grade-scale span {
+    background: rgba(255,255,255,0.16) !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .track-panel,
+[data-theme="dark"] .final-card {
+    background: #0f172a !important;
+    border-color: var(--border-color) !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.45) !important;
+}
+
+[data-theme="dark"] .course-row,
+[data-theme="dark"] .shared-row {
+    background: #111a2b !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .input-field label,
+[data-theme="dark"] .panel-label,
+[data-theme="dark"] .breakdown-list {
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .panel-head h2,
+[data-theme="dark"] .shared-row strong,
+[data-theme="dark"] .panel-badge,
+[data-theme="dark"] .track-result {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .panel-badge {
+    background: rgba(37,99,235,0.2) !important;
+}
+
+[data-theme="dark"] .track-result {
+    background: rgba(37,99,235,0.12) !important;
+    border-color: rgba(37,99,235,0.3) !important;
+}
+
+[data-theme="dark"] .track-result.error {
+    background: rgba(248,113,22,0.15) !important;
+    border-color: rgba(248,113,22,0.3) !important;
+    color: #ffb86c !important;
+}
+
+[data-theme="dark"] .outline-btn {
+    border-color: #7fb4ff !important;
+    color: #7fb4ff !important;
+    background: transparent !important;
+}
+
+[data-theme="dark"] .outline-btn:hover {
+    background: rgba(127,180,255,0.12) !important;
+}
+
+[data-theme="dark"] .track-panel input,
+[data-theme="dark"] .track-panel select {
+    background: #0b1220 !important;
+    color: #f8fafc !important;
+    border-color: #2b3950 !important;
+}
+
+[data-theme="dark"] .track-panel input::placeholder {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .shared-row small {
+    color: #cbd5e1 !important;
+}
+

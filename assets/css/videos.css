@@ -1,0 +1,329 @@
+/* ================================
+   إعدادات أساسية للصفحة
+   (لا نلمس body عشان الدارك مود تبعك)
+================================ */
+
+/* خلفية الصفحة */
+.videos-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f7f9ff 0%, #eef2ff 50%, #e8ecff 100%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.videos-page {
+    padding-top: 110px;        /* مساحة الهيدر الثابت */
+    padding-bottom: 60px;
+    position: relative;
+    z-index: 1;
+    color: #0f172a;
+}
+
+.videos-page .container {
+    width: min(960px, 100% - 2rem);
+    margin-inline: auto;
+}
+
+/* عنوان وقسم فرعي */
+.section-title {
+    text-align: center;
+    font-size: clamp(1.5rem, 2vw + 1rem, 2.1rem);
+    margin: 0 0 0.5rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.section-subtitle {
+    text-align: center;
+    margin: 0 0 1.8rem;
+    font-size: 0.95rem;
+    opacity: 1;
+    color: #0f172a;
+}
+
+/* ================================
+   كروت الفيديو (طولية)
+================================ */
+
+.videos-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* كرت واحد */
+.video-card {
+    display: flex;
+    gap: 14px;
+    align-items: stretch;
+    background: rgba(15, 23, 42, 0.9);    /* خلفية داكنة خفيفة */
+    border-radius: 18px;
+    padding: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    cursor: pointer;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+/* تأثير الهوفر */
+.video-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 35px rgba(15, 23, 42, 0.75);
+    border-color: rgba(248, 113, 22, 0.8);   /* برتقالي */
+}
+
+/* الجزء الخاص بالفيديو (عمودي) */
+.video-thumb {
+    flex: 0 0 140px;          /* عرض ثابت نسبي للفيديو */
+    max-width: 160px;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    background: #020617;
+}
+
+/* الفيديو أو الصورة جوّاه */
+.video-thumb img,
+.video-thumb video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;        /* يملأ الإطار بشكل عمودي */
+    aspect-ratio: 9 / 16;     /* عمودي */
+}
+
+/* الفيديو في البطاقة */
+.video-thumb video {
+    background: #000;
+    cursor: pointer;
+    pointer-events: none; /* منع التفاعل مع الفيديو مباشرة */
+}
+
+/* أيقونة تشغيل خفيفة فوق الفيديو (تظهر فقط عند hover) */
+.video-thumb::after {
+    content: "\f04b"; /* أيقونة play من Font Awesome */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 2rem;
+    background: radial-gradient(circle at center,
+                rgba(15, 23, 42, 0.0),
+                rgba(15, 23, 42, 0.7));
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+}
+
+.video-card:hover .video-thumb::after {
+    opacity: 1;
+}
+
+/* النصوص على يمين الفيديو */
+.video-card h3 {
+    margin: 2px 0 6px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #f97316;   /* برتقالي */
+}
+
+.video-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    opacity: 1;
+    color: #e5e7eb;
+}
+
+/* نخلي النص ياخذ باقي العرض */
+.video-card > div:not(.video-thumb) {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* ================================
+   نافذة الفيديو (ملء الشاشة تقريباً)
+================================ */
+
+.video-popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.86);
+    backdrop-filter: blur(5px);
+    display: none;             /* نفتحها بالـ JS بإضافة .active */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* لما تنفتح */
+.video-popup.active {
+    display: flex;
+}
+
+/* نخلي المحتوى يغطي تقريباً كل الشاشة */
+.video-popup-inner {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* زر الإغلاق أعلى اليمين */
+.close-popup {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(0, 0, 0, 0.75);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    z-index: 10000;
+}
+
+.close-popup:hover {
+    background: rgba(220, 38, 38, 0.9);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: scale(1.1);
+}
+
+.close-popup:active {
+    transform: scale(0.95);
+}
+
+/* الفيديو نفسه يملأ معظم الشاشة */
+#popupVideo {
+    flex: 1;
+    width: 100%;
+    max-height: calc(100% - 80px);
+    border-radius: 12px;
+    background: #000;
+    object-fit: contain;    /* يحافظ على النسبة */
+}
+
+/* أزرار أسفل الفيديو */
+.video-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 6px;
+}
+
+.video-controls button {
+    background: #f97316;
+    border: none;
+    color: #fff;
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    border-radius: 999px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.video-controls button i {
+    font-size: 0.9rem;
+}
+
+.video-controls button:hover {
+    background: #fb923c;
+    transform: translateY(-2px);
+}
+
+.video-controls button:active {
+    transform: scale(0.96);
+}
+
+/* ================================
+   موبايل وتابلت
+================================ */
+
+@media (max-width: 768px) {
+
+    .videos-page {
+        padding-top: 96px;
+        padding-bottom: 40px;
+    }
+
+    .video-card {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .video-thumb {
+        flex: 0 0 110px;
+        max-width: 120px;
+    }
+
+    .video-card h3 {
+        font-size: 0.98rem;
+    }
+
+    .video-card p {
+        font-size: 0.86rem;
+    }
+
+    .video-popup-inner {
+        padding: 8px;
+    }
+
+    #popupVideo {
+        border-radius: 10px;
+    }
+}
+
+/* موبايل أصغر */
+@media (max-width: 480px) {
+
+    .videos-page .container {
+        width: 100%;
+        padding-inline: 0.6rem;
+    }
+
+    .video-card {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .video-thumb {
+        flex: 0 0 100px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+    }
+
+    .section-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .video-controls button {
+        padding: 7px 11px;
+        font-size: 0.82rem;
+    }
+}

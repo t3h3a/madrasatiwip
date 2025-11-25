@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>مدرستي - مدرسة وادي موسى الثانوية</title>
+
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link rel="stylesheet" href="assets/css/header-footer.css">
+<link rel="stylesheet" href="assets/css/home.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/header.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/dark-mode.css">
+<link rel="stylesheet" href="assets/css/auth-guard.css">
+<link rel="stylesheet" href="assets/css/responsive.css">
+
+</head>
+
+<body data-page="home">
+
+<header class="main-header">
+    <div class="container header-inner">
+
+        <div class="brand-area desktop-only">
+            <div class="school-logo">
+                <img src="assets/images/school-logo.png" alt="شعار المدرسة">
+            </div>
+            <div class="brand-text">
+                <span class="brand-top">مدرستي</span>
+                <span class="brand-sub">مدرسة وادي موسى الثانوية الشاملة للبنين</span>
+            </div>
+        </div>
+
+        <nav class="main-nav desktop-only">
+            <a href="index.html" class="active" data-i18n="nav.home">الرئيسية</a>
+            <a href="gallery.html" data-i18n="nav.gallery">معرض الإنجازات</a>
+            <a href="btec.html" data-i18n="nav.btec">نظام BTEC</a>
+            <a href="calculator.html" data-i18n="nav.calculator">حاسبة المعدل</a>
+            <a href="videos.html" data-i18n="nav.videos">فيديوهات توعوية</a>
+            <a href="ai.html" data-i18n="nav.ai">المساعد الذكي</a>
+            <a href="opinions.html" data-i18n="nav.opinions">الآراء</a>
+        </nav>
+
+        <div class="pearson-badge desktop-only" onclick="location.href='btec.html'">
+            <img src="assets/images/pearson-logo.png" alt="Pearson">
+            <span>BTEC Pearson</span>
+        </div>
+
+        <div class="desktop-only" style="display: flex; align-items: center; gap: 10px;">
+            <a href="settings.html" class="settings-link" id="settingsShortcut" data-i18n-title="settings.title" title="الإعدادات">
+                <i class="fa-solid fa-gear"></i>
+            </a>
+            <button class="theme-toggle" id="themeToggle" aria-label="تبديل الوضع">
+                <i class="fa-solid fa-sun"></i>
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </div>
+
+</header>
+
+
+<section class="hero">
+
+    <div class="hero-slider">
+        <div class="slide active" style="background-image: url('assets/background/hero1.jpg')"></div>
+        <div class="slide" style="background-image: url('assets/background/hero2.jpg')"></div>
+    </div>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content container">
+        <h1 data-i18n="hero.title">
+            أهلاً بك في <span>مدرستي</span>
+            <br> مسار مميّز مع نظام <span>BTEC Pearson</span>
+        </h1>
+
+        <p data-i18n="hero.desc">
+            منصة تعليمية حديثة تجمع بين التعليم المدرسي الأردني ونظام التعليم المهني البريطاني BTEC 
+            في تخصصي <strong>تكنولوجيا المعلومات</strong> و<strong>الضيافة الفندقية</strong>.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="ai.html" class="btn-primary"><i class="fa-solid fa-robot"></i> <span data-i18n="hero.cta">جرّب المساعد الذكي</span></a>
+        </div>
+    </div>
+</section>
+
+
+<section class="section-achievements">
+    <div class="ach-img">
+        <img src="assets/images/robo1.jpg" alt="إنجازات RoboChamps">
+        <div class="ach-tag" onclick="window.location.href='gallery.html'">
+            إنجازات طلاب RoboChamps 🏅
+        </div>
+    </div>
+
+    <div class="ach-text">
+        <h2 data-i18n="ach1.title">مدرسة وادي موسى الثانوية</h2>
+        <p data-i18n="ach1.desc">
+            تقع المدرسة في مدينة وادي موسى – لواء البتـراء، وتقدّم تعليماً شاملاً من الصف التاسع
+            حتى التوجيهي، مع مسار مهني مميز ضمن نظام BTEC البريطاني.
+        </p>
+
+        <div class="stat-line" data-i18n="ach1.stat1">كوادر تعليمية متمرسة في المسار المهني والأكاديمي</div>
+        <div class="stat-line" data-i18n="ach1.stat2">مشاريع عملية تعكس واقع سوق العمل</div>
+        <div class="stat-line" data-i18n="ach1.stat3">توجيه فردي للطلاب ودعم في اتخاذ القرار المهني</div>
+    </div>
+</section>
+
+
+<section class="section-achievements">
+    <div class="ach-img">
+        <img src="assets/background/btecback1.jpg" alt="BTEC ">
+        <div class="ach-tag" onclick="window.location.href='btec.html'">
+                تعرف على  نظام (BTEC)
+        </div>
+    </div>
+
+    <div class="ach-text">
+        <h2 data-i18n="ach2.title">مدرسة وادي موسى الثانوية</h2>
+        <p data-i18n="ach2.desc">
+        تشمل مدرسة وادي موسى الثانوية الشاملة للبنين تدريس النظام البرطاني الجديد (BTEC)  او ما يسمونة بلعربية    
+        </p>
+
+        <div class="stat-line" data-i18n="ach2.stat1">134 طالب في مسار BTEC</div>
+        <div class="stat-line" data-i18n="ach2.stat2">59 تخصص تكنولوجيا المعلومات</div>
+        <div class="stat-line" data-i18n="ach2.stat3">74 الضيافة الفندقية</div>
+    </div>
+</section>
+
+
+
+<section class="section-achievements">
+    <div class="ach-img">
+        <img src="assets/background/hasba.jpg" alt="BTEC ">
+        <div class="ach-tag" onclick="window.location.href='calculator.html'">
+                 حاسبة معدل ال(BTEC)
+        </div>
+    </div>
+
+    <div class="ach-text">
+        <h2 data-i18n="ach3.title">حاسبة معدل النظام البرطاني    (BTEC) </h2>
+        <p data-i18n="ach3.desc">
+        هذة واجهه متكاملة لحساب معدل التقارير الواجبات الخاصة بالطلاب 
+        </p>
+
+        <div class="stat-line" data-i18n="ach3.stat1">    جلب تقييم ال(p) يعادل النجاح</div>
+        <div class="stat-line" data-i18n="ach3.stat2">جلب تقييم ال(m)يعادل التفوق </div>
+        <div class="stat-line" data-i18n="ach3.stat3">جلب تقييم ال(D) يعادل الأمتياز   </div>
+    </div>
+</section>
+
+<section class="section-achievements">
+    <div class="ach-img">
+        <img src="assets/background/pvid1.jpg" alt="فيديوهات توعوية">
+        <div class="ach-tag" onclick="window.location.href='videos.html'">
+                    فيديوهات توعوية
+        </div>
+    </div>
+
+    <div class="ach-text">
+        <h2 data-i18n="ach4.title">مدرسة وادي موسى الثانوية</h2>
+        <p data-i18n="ach4.desc">
+                     فيديوهات توعوية عن نظام بتيك في مدرستنا  وكيف هو بألسنة طلاب التخصص 
+        </p>
+
+        <div class="stat-line" data-i18n="ach4.stat1"> معلومات عن  تخصصات البتيك في مدرستنا</div>
+        <div class="stat-line" data-i18n="ach4.stat2">معلومات عن تخصص البتيك وكيف هو</div>
+        <div class="stat-line" data-i18n="ach4.stat3">  معلومات اخرى  وفيديوهات جميلة </div>
+    </div>
+</section>
+
+
+
+<section class="section-achievements">
+    <div class="ach-img">
+        <img src="assets/background/ai1.jpg" alt="ai ">
+        <div class="ach-tag" onclick="window.location.href='ai.html'">
+                    المساعد الآلي (AI)
+        </div>
+    </div>
+
+    <div class="ach-text">
+        <h2 data-i18n="ach5.title">مدرسة وادي موسى الثانوية</h2>
+        <p data-i18n="ach5.desc">
+                   تشمل صفحه مدرسة وادي موسى الثانوية الشاملة للبنين  صفحه مساعد الي (ذكاء اصطناعي) يتضمن معلومات عن :    
+        </p>
+
+        <div class="stat-line" data-i18n="ach5.stat1"> معلومات عن تخصصات   BTEC</div>
+        <div class="stat-line" data-i18n="ach5.stat2">معلومات عن المدرسة ومعلميها   </div>
+        <div class="stat-line" data-i18n="ach5.stat3">  معلومات اخرى عامة </div>
+    </div>
+</section>
+
+
+
+<section class="social-section">
+    <div class="container">
+        <h2 class="section-title" data-i18n="social.title">ابقَ على تواصل مع <span>مدرستك</span></h2>
+        <p class="section-subtitle" data-i18n="social.subtitle">
+            تواصل مباشر مع الإدارة عبر الواتساب، وتابع آخر الأخبار والإنجازات عبر صفحة فيسبوك.
+        </p>
+
+        <div class="social-cards">
+           
+            <a class="social-card whatsapp-card" href="https://wa.me/962777244572" target="_blank">
+                <div class="social-icon">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+                <h3 data-i18n="social.whatsapp.title">الواتساب الرسمي للمدرسة</h3>
+                <p data-i18n="social.whatsapp.desc">
+                    تواصل مع الإدارة للإستفسارات حول التسجيل، الدوام، والتخصصات المتاحة.
+                </p>
+                <div class="social-highlight" data-i18n="social.whatsapp.number">+962 7 7724 4572</div>
+                <div class="social-action">
+                    <span data-i18n="social.whatsapp.action">افتح محادثة واتساب</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </div>
+            </a>
+
+            <a class="social-card facebook-card"
+               href="https://web.facebook.com/profile.php?id=100064866513168"
+               target="_blank">
+                <div class="social-icon">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </div>
+                <h3 data-i18n="social.facebook.title">صفحة المدرسة على فيسبوك</h3>
+                <p data-i18n="social.facebook.desc">
+                    شاهد أحدث الأخبار، الأنشطة، والإنجازات اليومية لطلاب المدرسة.
+                </p>
+                <div class="social-highlight" data-i18n="social.facebook.handle">@WadiMusaSecondarySchool</div>
+                <div class="social-action">
+                    <span data-i18n="social.facebook.action">انتقل إلى الصفحة</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </div>
+            </a>
+
+        </div>
+    </div>
+</section>
+
+
+<footer class="main-footer">
+    <div class="container footer-inner">
+        <div data-i18n="footer.copyright">© <span id="year"></span> مدرسة وادي موسى الثانوية الشاملة للبنين</div>
+
+        <div class="footer-dev" data-i18n="footer.dev">
+            تصميم وبرمجة  
+            <strong>الطالب ثائر محمد السلامين</strong>
+        </div>
+        
+        <div class="footer-dev" data-i18n="footer.support">
+              دعم لوجستي 
+            <strong>الطالب عمر راجي الهلالات</strong>
+        </div>
+        <div class="footer-dev" data-i18n="footer.supervisor">
+            بإشراف  
+          <strong>المهندس حسن النوافلة   </strong>
+      </div>
+    </div>
+</footer>
+
+
+
+<script type="module" src="assets/js/auth-guard.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/home.js"></script>
+<script src="assets/js/dark-mode.js"></script>
+
+<script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

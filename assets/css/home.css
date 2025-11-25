@@ -1,0 +1,403 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Tajawal", sans-serif;
+    background: #0b0b0d;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+.main-header {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #222;
+}
+
+.header-inner {
+    max-width: 1350px;
+    margin: auto;
+    padding: 12px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.school-logo img {
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+}
+
+
+.pearson-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 12px;
+}
+
+.pearson-badge img {
+    width: 70px;
+    height: auto;
+}
+
+.pearson-badge span {
+    font-size: 13px;
+    margin-top: 2px;
+    opacity: 0.9;
+}
+
+
+.main-nav {
+    display: flex;
+    gap: 22px;
+    align-items: center;
+}
+
+.main-nav a {
+    color: #fff;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 10px;
+    transition: 0.25s;
+    font-size: 15px;
+}
+
+.main-nav a:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.main-nav .active {
+    background: #2563eb;
+    color: #fff;
+}
+
+
+.nav-toggle {
+    display: none;
+    font-size: 22px;
+    background: none;
+    border: none;
+    color: #fff;
+}
+
+
+
+.hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    margin-top: 85px;
+    overflow: hidden;
+}
+
+
+.hero-bg-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    animation: sliderAnimation 12s infinite alternate ease-in-out;
+}
+
+
+.hero-bg-1 {
+    background-image: url("assets/background/hero1.jpg");
+}
+
+.hero-bg-2 {
+    background-image: url("assets/background/hero2.jpg");
+    opacity: 0;
+}
+
+
+@keyframes sliderAnimation {
+    0% { opacity: 1; }
+    45% { opacity: 1; }
+    50% { opacity: 0; }
+    95% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+
+.hero-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.95));
+}
+
+
+.hero-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    top: 28%;
+}
+
+.hero-content h1 {
+    font-size: 3.1rem;
+    font-weight: 800;
+    line-height: 1.5;
+    color: #ffffff;
+}
+
+.hero-content h1 span {
+    color: #f97316;
+}
+
+.hero-content p {
+    max-width: 700px;
+    margin: 18px auto;
+    font-size: 1.1rem;
+    color: #e5e7eb;
+}
+
+.hero-buttons {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn-primary {
+    background: #2563eb;
+    padding: 12px 24px;
+    border-radius: 12px;
+    color: #fff;
+    text-decoration: none;
+    transition: 0.25s;
+    font-size: 1rem;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+}
+
+.btn-orange {
+    background: #f97316;
+    padding: 12px 24px;
+    border-radius: 12px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-orange:hover {
+    background: #ea580c;
+}
+
+
+
+
+.section-achievements {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    padding: 80px 0;
+    max-width: 1300px;
+    margin: auto;
+}
+
+.section-achievements .ach-img {
+    width: 500px;
+    height: 330px;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    position: relative;
+}
+
+.section-achievements .ach-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.section-achievements .ach-tag {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    background: #ff7a00;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.section-achievements .ach-tag:hover {
+    background: #ff8f2e;
+    transform: translateY(-3px);
+}
+
+.section-achievements .ach-text {
+    max-width: 550px;
+}
+
+.section-achievements .ach-text h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    color: #0f172a;
+}
+
+.section-achievements .ach-text p {
+    line-height: 1.9;
+    font-size: 1.05rem;
+    margin-bottom: 18px;
+    color: #334155;
+}
+
+.section-achievements .stat-line {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+
+
+@media (max-width: 840px) {
+    .section-achievements {
+        flex-direction: column;
+        padding: 50px 20px;
+        text-align: center;
+    }
+
+    .section-achievements .ach-img {
+        width: 90%;
+        height: 250px;
+    }
+
+    .section-achievements .ach-tag {
+        bottom: 10px;
+        left: 10px;
+    }
+
+    .section-achievements .ach-text {
+        max-width: 100%;
+    }
+}
+
+
+
+@media (max-width: 850px) {
+    .main-nav {
+        display: none;
+        flex-direction: column;
+        background: #111;
+        position: absolute;
+        top: 80px;
+        right: 10px;
+        width: 180px;
+        border-radius: 12px;
+        padding: 12px;
+    }
+
+    .main-nav.show {
+        display: flex;
+    }
+
+    .nav-toggle {
+        display: block;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+}
+
+.social-section {
+    padding: 90px 0;
+    background: #f6f7fb;
+}
+
+.social-section .section-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    font-weight: 800;
+}
+
+.social-section .section-title span {
+    color: #ff7a00;
+}
+
+.social-section .section-subtitle {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #555;
+}
+
+.social-cards {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.social-card {
+    width: 330px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    padding: 25px;
+    text-decoration: none;
+    color: #222;
+    transition: .3s;
+}
+
+.social-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.18);
+}
+
+.social-icon {
+    font-size: 2.4rem;
+    margin-bottom: 15px;
+}
+
+.whatsapp-card .social-icon {
+    color: #25D366;
+}
+
+.facebook-card .social-icon {
+    color: #1877f2;
+}
+
+.social-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.social-highlight {
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.social-action {
+    margin-top: 10px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

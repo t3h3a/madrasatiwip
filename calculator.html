@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>حاسبة المعدل النهائي BTEC</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/dark-mode.css">
+    <link rel="stylesheet" href="assets/css/calculator.css">
+    <link rel="stylesheet" href="assets/css/auth-guard.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body data-page="calculator">
+    <header class="main-header">
+        <div class="container header-inner">
+            <div class="brand-area">
+                <div class="school-logo">
+                    <img src="assets/images/school-logo.png" alt="شعار مدرسة وادي موسى">
+                </div>
+                <div class="brand-text">
+                    <span class="brand-top">مدرستي</span>
+                    <span class="brand-sub">مدرسة وادي موسى الثانوية الشاملة للبنين</span>
+                </div>
+            </div>
+
+            <nav class="main-nav">
+                <a href="index.html">الرئيسية</a>
+                <a href="gallery.html">معرض الإنجازات</a>
+                <a href="btec.html">نظام BTEC</a>
+                <a href="calculator.html" class="active">حاسبة المعدل</a>
+                <a href="videos.html">فيديوهات توعوية</a>
+                <a href="ai.html">المساعد الذكي</a>
+                <a href="opinions.html">الآراء</a>
+            </nav>
+
+            <div class="pearson-badge" onclick="location.href='btec.html'">
+                <img src="assets/images/pearson-logo.png" alt="Pearson">
+                <span>BTEC Pearson</span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button class="theme-toggle" id="themeToggle" aria-label="تبديل الوضع">
+                    <i class="fa-solid fa-sun"></i>
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button class="nav-toggle" id="navToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="calculator-shell">
+        <div class="container">
+            <section class="hero-card">
+                <div>
+                    <p class="hero-eyebrow">حاسبة المعدل النهائي</p>
+                    <h1>احسب مسارك في نظام BTEC</h1>
+                    <p class="hero-text">
+                        هذه الأداة المخصصة لمدرستك تُمكّنك من إدخال بيانات الأول ثانوي، التوجيهي، والمواد المشتركة
+                        ثم حساب النتيجة النهائية مباشرة في نفس الصفحة.
+                    </p>
+                </div>
+                <div class="hero-actions">
+                    <span>أضف المواد، اختر التقدير، وشاهد النتيجة تتحدث فوراً.</span>
+                    <span>لا حاجة لأي مواقع أخرى، كل شيء الآن ضمن موقع مدرستي.</span>
+                </div>
+            </section>
+
+            <section class="mode-tabs" role="tablist">
+                <button type="button" class="tab-button active" data-track-tab="first">
+                    الأول ثانوي (35%)
+                </button>
+                <button type="button" class="tab-button" data-track-tab="tawjihi">
+                    التوجيهي (35%)
+                </button>
+                <button type="button" class="tab-button" data-track-tab="shared">
+                    المواد المشتركة (30%)
+                </button>
+            </section>
+
+            <section class="calculator-grid">
+                <aside class="info-column">
+                    <article class="info-card">
+                        <h3>طريقة الحساب</h3>
+                        <ul>
+                            <li>الأول ثانوي يشكل 35٪ من المعدل النهائي.</li>
+                            <li>التوجيهي يشكل 35٪ من المعدل النهائي.</li>
+                            <li>المواد المشتركة تشكل 30٪ موزعة كما هو موضح.</li>
+                            <li>سلم التقدير: D=100، M=80، P=60، U=0.</li>
+                        </ul>
+                    </article>
+
+                    <article class="info-card">
+                        <h3>المواد المشتركة</h3>
+                        <ul>
+                            <li>اللغة الإنجليزية – 10٪</li>
+                            <li>اللغة العربية – 10٪</li>
+                            <li>التربية الإسلامية – 6٪</li>
+                            <li>التاريخ – 4٪</li>
+                        </ul>
+                    </article>
+
+                    <article class="info-card gradient grade-scale-card">
+                        <h3>سلم تقديرات BTEC</h3>
+                        <div class="grade-scale">
+                            <span>D - Distinction = 100</span>
+                            <span>M - Merit = 80</span>
+                            <span>P - Pass = 60</span>
+                            <span>U - Unclassified = 0</span>
+                        </div>
+                    </article>
+                </aside>
+
+                <div class="tracks-column">
+                    <div class="track-panel active" data-track-panel="first">
+                        <header class="panel-head">
+                            <div>
+                                <p class="panel-label">مواد الأول ثانوي (التخصص)</p>
+                                <h2>أدخل ساعات وتقدير كل مادة</h2>
+                            </div>
+                            <span class="panel-badge">35%</span>
+                        </header>
+
+                        <div class="course-rows" data-course-list="first"></div>
+
+                        <div class="panel-actions">
+                            <button type="button" class="outline-btn" data-add-course="first">
+                                <i class="fa-solid fa-plus"></i>
+                                إضافة مادة
+                            </button>
+                        </div>
+
+                        <div class="track-result" data-track-result="first"></div>
+                    </div>
+
+                    <div class="track-panel" data-track-panel="tawjihi">
+                        <header class="panel-head">
+                            <div>
+                                <p class="panel-label">مواد التوجيهي (التخصص)</p>
+                                <h2>نفس الساعات ونفس السلم للمرحلة الثانية</h2>
+                            </div>
+                            <span class="panel-badge">35%</span>
+                        </header>
+
+                        <div class="course-rows" data-course-list="tawjihi"></div>
+
+                        <div class="panel-actions">
+                            <button type="button" class="outline-btn" data-add-course="tawjihi">
+                                <i class="fa-solid fa-plus"></i>
+                                إضافة مادة
+                            </button>
+                        </div>
+
+                        <div class="track-result" data-track-result="tawjihi"></div>
+                    </div>
+
+                    <div class="track-panel" data-track-panel="shared">
+                        <header class="panel-head">
+                            <div>
+                                <p class="panel-label">المواد المشتركة</p>
+                                <h2>أدخل علامة كل مادة من 100</h2>
+                            </div>
+                            <span class="panel-badge">30%</span>
+                        </header>
+
+                        <div class="shared-grid" data-shared-grid></div>
+
+                        <div class="track-result" data-track-result="shared"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="final-card">
+                <div>
+                    <h3>النتيجة النهائية</h3>
+                    <p id="finalScore">أدخل بيانات المسارات الثلاث ثم اضغط على الزر لحساب المعدل.</p>
+                    <ul id="breakdownList" class="breakdown-list"></ul>
+                </div>
+                <button id="calculateAll" class="primary-btn">
+                    <i class="fa-solid fa-calculator"></i>
+                    احسب المعدل النهائي
+                </button>
+            </section>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container footer-inner">
+            <div>© <span id="year"></span> مدرسة وادي موسى الثانوية الشاملة للبنين</div>
+            <div class="footer-dev">تطوير بواسطة <strong>الطالب ثائر محمد السلامين</strong></div>
+            <div class="footer-dev">دعم لوجستي <strong>الطالب عمر راجي الهلالات</strong></div>
+            <div class="footer-dev">بإشراف <strong>المهندس حسن النوافلة</strong></div>
+        </div>
+    </footer>
+
+    <script type="module" src="assets/js/auth-guard.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/dark-mode.js"></script>
+    <script src="assets/js/calculator.js"></script>
+</body>
+</html>

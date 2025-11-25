@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>نظام BTEC - معلومات شاملة</title>
+
+    <!-- الخط والأيقونات -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <!-- ملف التنسيق -->
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/btec.css">
+    <link rel="stylesheet" href="assets/css/dark-mode.css">
+    <link rel="stylesheet" href="assets/css/auth-guard.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body data-page="btec">
+    <header class="main-header">
+        <div class="container header-inner">
+    
+            <div class="brand-area">
+                <div class="school-logo">
+                    <img src="assets/images/school-logo.png" alt="شعار المدرسة">
+                </div>
+                <div class="brand-text">
+                    <span class="brand-top">مدرستي</span>
+                    <span class="brand-sub">مدرسة وادي موسى الثانوية الشاملة للبنين</span>
+                </div>
+            </div>
+    
+            <nav class="main-nav">
+                <a href="index.html">الرئيسية</a>
+                <a href="gallery.html">معرض الإنجازات</a>
+                <a href="btec.html" class="active">نظام BTEC</a>
+                <a href="calculator.html">حاسبة المعدل</a>
+                <a href="videos.html">فيديوهات توعوية</a>
+                <a href="ai.html">المساعد الذكي</a>
+                <a href="opinions.html">الآراء</a>
+            </nav>
+    
+            <div class="pearson-badge">
+                <img src="assets/images/pearson-logo.png" alt="Pearson">
+                <span>BTEC Pearson</span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button class="theme-toggle" id="themeToggle" aria-label="تبديل الوضع">
+                    <i class="fa-solid fa-sun"></i>
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button class="nav-toggle" id="navToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+    
+        </div>
+    </header>
+    
+<!-- ====================== الهيرو ======================= -->
+<header class="btec-hero">
+    <div class="btec-hero-slider">
+        <div class="btec-slide active" style="background-image: url('assets/background/hero3.jpg');"></div>
+        <div class="btec-slide" style="background-image: url('assets/background/hero4.jpg');"></div>
+    </div>
+    <div class="overlay"></div>
+
+    <div class="hero-content">
+        <h1>تعرف على نظام <span>BTEC</span></h1>
+        <p>
+            نظام التعليم البريطاني المهني الأكثر اعتماداً عالمياً، ويعتمد على المهارات العملية
+            والتطبيقات الواقعية وليس على الحفظ التقليدي.
+        </p>
+        <a href="#details" class="hero-btn">
+            إبدأ الاستكشاف <i class="fa-solid fa-arrow-down"></i>
+        </a>
+    </div>
+</header>
+
+<!-- ====================== تعريف النظام ======================= -->
+<section class="section" id="details">
+    <h2 class="section-title">ما هو <span>BTEC</span> ؟</h2>
+
+    <p class="section-desc">
+        كلمة BTEC هي اختصار لـ <strong>Business and Technology Education Council</strong>،
+        وهو نظام تعليمي مهني بريطاني يعتمد على المهارات العملية والتقييم المستمر.
+        يتم تدريسه في أكثر من <strong>100 دولة</strong> حول العالم ويُعتبر واحداً
+        من أشهر البرامج المهنية التي تؤهل الطلبة للجامعة أو سوق العمل.
+    </p>
+
+    <div class="info-grid">
+        <div class="info-card">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <h3>نظام عالمي</h3>
+            <p>يتم تدريسه في مئات المؤسسات، ومعتمد دولياً للالتحاق بالجامعات أو العمل.</p>
+        </div>
+
+        <div class="info-card">
+            <i class="fa-solid fa-gears"></i>
+            <h3>تعليم قائم على المهارات</h3>
+            <p>لا يعتمد على الحفظ بل على المشاريع، المهام العملية، والعروض التقديمية.</p>
+        </div>
+
+        <div class="info-card">
+            <i class="fa-solid fa-file-circle-check"></i>
+            <h3>تقييم مستمر</h3>
+            <p>يتم تقييم الطالب عبر مهام عملية وتطبيقية طوال العام بدون امتحان نهائي.</p>
+        </div>
+
+        <div class="info-card">
+            <i class="fa-solid fa-briefcase"></i>
+            <h3>جاهزية لسوق العمل</h3>
+            <p>يُكسب الطالب مهارات عملية مباشرة مطلوبة في الوظائف الحديثة.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ====================== التخصصات ======================= -->
+<section class="section">
+    <h2 class="section-title">تخصصات <span>BTEC</span></h2>
+
+    <div class="majors-grid">
+
+        <div class="major-card">
+            <i class="fa-solid fa-laptop-code"></i>
+            <h3>تكنولوجيا المعلومات IT</h3>
+            <p>
+                يشمل البرمجة، الأمن السيبراني، الشبكات، قواعد البيانات، تطوير التطبيقات،
+                وإدارة الأنظمة. مناسب للطلاب المهتمين بالتقنية والتحليل.
+            </p>
+        </div>
+
+        <div class="major-card">
+            <i class="fa-solid fa-hotel"></i>
+            <h3>الضيافة الفندقية</h3>
+            <p>
+                يهتم بمهارات خدمة العملاء، إدارة الفنادق، إعداد الطعام والشراب،
+                ومعايير الجودة العالمية. يؤهل للعمل في الفنادق والمنتجعات.
+            </p>
+        </div>
+
+        <div class="major-card">
+            <i class="fa-solid fa-lightbulb"></i>
+            <h3>التصميم الإبداعي</h3>
+            <p>تصميم الهوية البصرية (شعار، ألوان، خطوط)، الموشن جرافيك، إنتاج الفيديو القصير، صناعة المحتوى الرقمي للسوشال ميديا، التصوير الاحترافي، التصميم التفاعلي، سرد القصص البصرية (Visual Storytelling)، والابتكار في تقديم الأفكار عبر الوسائط الحديثة.
+            </p>
+        </div>
+
+        <div class="major-card">
+            <i class="fa-solid fa-briefcase"></i>
+            <h3> إدارة الأعمال والتسويق</h3>
+            <p>
+                يشمل: المحاسبة الأساسية، التسويق الرقمي، ريادة الأعمال، إدارة الموارد البشرية، التجارة الإلكترونية، إدارة المشاريع الصغيرة، والتخطيط المالي
+            </p>
+        </div>
+        <div class="major-card">
+            <i class="fa-solid fa-gears"></i>
+            <h3>الهندسة والتقنيات الصناعية </h3>
+            <p>يشمل: تمديدات الكهرباء، الإلكترونيات، صيانة السيارات، أنظمة التكييف والتبريد، التصنيع الميكانيكي، التحكم الآلي، وتقنيات الطاقة المتجددة.
+            </p>
+        </div>
+        
+        <div class="major-card">
+            <i class="fa-solid fa-paper-plane"></i>
+            <h3> الوسائط المتعددة والإعلام الرقمي</h3>
+            <p>يشمل: صناعة المحتوى المرئي، التصوير السينمائي، المونتاج، البث المباشر، كتابة السيناريو الإعلاني، إدارة المنصات الرقمية، وتصميم تجربة المستخدم للمحتوى.
+
+            </p>
+        </div>
+
+        
+        <div class="major-card">
+            <i class="fa-solid fa-heart-pulse"></i>
+            <h3> الرعاية الصحية</h3>
+            <p>يشمل: التمريض المساعد، المختبرات الطبية، الأجهزة والتشخيص الطبي، الإسعافات الأولية، الصحة المجتمعية، العناية بالمسنين، ودعم الفرق الطبية في المستشفيات والعيادات.
+
+            </p>
+        </div>
+        
+        <div class="major-card">
+            <i class="fa-solid fa-person-running"></i>
+            <h3>الرياضة </h3>
+            <p>
+                يشمل: التدريب البدني، تأهيل اللياقة البدنية، إدارة الأندية والمراكز الرياضية، الإسعافات الرياضية، تغذية الرياضيين، تنظيم الفعاليات والبطولات، وإعداد برامج التدريب الفردي والجماعي.
+            </p>
+        </div>
+        
+        <div class="major-card">
+            <i class="fa-solid fa-seedling"></i>
+            <h3>الزراعي </h3>
+            <p>
+                يشمل: الزراعة الحديثة (بدون تربة، الدفيئات)، الإنتاج الحيواني، الميكنة الزراعية، حماية النباتات، إدارة الموارد المائية، تربية النحل، وتسويق المنتجات الزراعية.
+            </p>
+        </div>
+
+        <div class="major-card">
+            <i class="fa-solid fa-hard-hat"></i>
+            <h3>البناء والإنشاء </h3>
+            <p>
+                يشمل: القراءة من المخططات الهندسية، أعمال البناء (الخَرسانة، الطوب، التشطيبات)، تمديدات الكهرباء والمياه، المساحة والخرائط، استخدام المعدات الثقيلة، وإدارة مواقع الإنشاء.
+            </p>
+        </div>
+
+        <div class="major-card">
+            <i class="fa-solid fa-spa"></i>
+            <h3>التجميل </h3>
+            <p>
+                يشمل: العناية بالبشرة والشعر، المكياج الاحترافي (يومي، سهرات، عرائس)، تصفيف الشعر، العناية بالأظافر (مانيكير وباديكير)، إزالة الشعر (الليزر والشمع)، وتقديم الاستشارات الجمالية للعناية الشخصية.
+
+
+            </p>
+        </div>
+
+        <div class="major-card">
+            <i class="fa-solid fa-plane"></i>
+            <h3>السياحة والسفر </h3>
+            <p>
+                تنظيم الرحلات السياحية، حجز التذاكر والفنادق، إرشاد السياح (Tour Guiding)، معرفة الوجهات العالمية، خدمة العملاء في شركات السفر، التسويق السياحي، إدارة المطارات (الجانب الخدمي)، والتعامل مع المنصات الإلكترونية للسفر.
+            </p>
+        </div>
+
+        <div class="major-card">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+            <h3>هندسة الطيران  </h3>
+            <p>
+                صيانة الطائرات، أنظمة الدفع والمحركات، الإلكترونيات الجوية (Avionics)، هيكل الطائرة (Airframe)، أنظمة الهيدروليك والكهرباء في الطيران، السلامة الجوية، مراقبة الحركة الجوية (ATC - في بعض المسارات)، واختبار المكونات الجوية.
+            </p>
+        </div>
+
+        
+        <div class="major-card">
+            <i class="fa-solid fa-palette"></i>
+            <h3>الفن والتصميم </h3>
+            <p>الرسم اليدوي والرقمي، تصميم الجرافيك الأساسي، تنسيق الألوان والتكوين البصري، فن الخط والكتابة الإبداعية، تصميم الملصقات والمنشورات، استخدام برامج مثل Adobe Illustrator وPhotoshop، والأساسيات الفنية مثل الظل، المنظور، والتناسق
+            </p>
+        </div>
+
+
+        <div class="major-card">
+            <i class="fa-solid fa-newspaper"></i>
+            <h3>المطبوعات والنشر الرقمي  </h3>
+        <p>يشمل: تحرير النصوص، إنتاج المحتوى المكتوب، التصميم الصحفي، إخراج الكتب والمجلات، واستخدام أدوات النشر مثل InDesign.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<!-- ====================== مستويات BTEC ======================= -->
+<section class="section">
+    <h2 class="section-title">مستويات <span>BTEC</span></h2>
+
+    <div class="levels-grid">
+
+        <div class="level-box">
+            <h3>Level 1</h3>
+            <p>مستوى تأسيسي لبناء المهارات الأساسية التقنية والمهنية.</p>
+        </div>
+
+        <div class="level-box">
+            <h3>Level 2</h3>
+            <p>مستوى متوسط يؤهل الطالب للوظائف المبدئية أو التدريب المتقدم.</p>
+        </div>
+
+        <div class="level-box">
+            <h3>Level 3</h3>
+            <p>أعلى مستوى مدرسي، يؤهل الطالب للالتحاق بالجامعات الدولية.</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- ====================== التقييم ======================= -->
+<section class="section">
+    <h2 class="section-title">كيف يتم <span>تقييم</span> الطالب؟</h2>
+
+    <ul class="faq-list">
+        <li><i class="fa-solid fa-check"></i> مهام عملية (Assignments)</li>
+        <li><i class="fa-solid fa-check"></i> مشاريع تطبيقية</li>
+        <li><i class="fa-solid fa-check"></i> عروض تقديمية</li>
+        <li><i class="fa-solid fa-check"></i> أعمال فردية وجماعية</li>
+        <li><i class="fa-solid fa-check"></i> تقييم مستمر بدون امتحان نهائي</li>
+    </ul>
+</section>
+
+<!-- ====================== أمثلة مشاريع ======================= -->
+<section class="section">
+    <h2 class="section-title">أمثلة على <span>مشاريع</span> BTEC</h2>
+
+    <div class="projects-grid">
+        <div class="project-card">إنشاء موقع إلكتروني كامل</div>
+        <div class="project-card">تصميم نظام قواعد بيانات</div>
+        <div class="project-card">فيديو ترويجي احترافي</div>
+        <div class="project-card">محاكاة استقبال فندقي</div>
+        <div class="project-card">إعداد قوائم طعام فندقية</div>
+        <div class="project-card">تصميم شعار وبروفايل لشركة</div>
+    </div>
+</section>
+
+
+<!-- ====================== الفوتر ======================= -->
+<footer class="main-footer">
+    <div class="container footer-inner">
+        <div>© <span id="year"></span> مدرسة وادي موسى الثانوية الشاملة للبنين</div>
+        <div class="footer-dev">تطوير بواسطة <strong>الطالب ثائر محمد السلامين</strong></div>
+        <div class="footer-dev">دعم  لوجستي بواسطة <strong>الطالب عمر راجي الهلالات </strong></div>
+        <div class="footer-dev">بإشراف  <strong>   المهندس حسن النوافلة</strong></div>
+    </div>
+</footer>
+
+<script type="module" src="assets/js/auth-guard.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/dark-mode.js"></script>
+<!-- Inline script moved to `assets/js/main.js` to apply site-wide and avoid duplication -->
+
+</body>
+</html>

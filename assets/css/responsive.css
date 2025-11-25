@@ -1,0 +1,11 @@
+
+/* Responsive overrides */
+@media (max-width: 768px){
+ body{padding:0;margin:0;}
+ .main-header{padding:8px 0;}
+ .main-nav{flex-direction:column;gap:6px;}
+ .main-nav a{display:block;width:100%;text-align:center;padding:10px;font-size:1rem;}
+ .hero-section{flex-direction:column;}
+ .cards-grid{grid-template-columns:1fr!important;}
+ img{max-width:100%;height:auto;}
+}

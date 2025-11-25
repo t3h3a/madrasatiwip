@@ -1,0 +1,673 @@
+/* =========================
+   متغيرات وأساسيات عامة
+========================= */
+:root {
+    --bg-main: #020617;            /* خلفية داكنة */
+    --bg-card: rgba(15, 23, 42, 0.96);
+    --accent: var(--accent-secondary, #f97316);             /* برتقالي */
+    --accent-soft: rgba(249, 115, 22, 0.14);
+    --primary: var(--accent-primary, #3b82f6);            /* أزرق */
+    --primary-soft: rgba(59, 130, 246, 0.12);
+    --text-main: #f8fafc;          /* نص أبيض أوضح */
+    --text-muted: #cbd5e1;         /* نص ثانوي أفتح */
+    --radius-lg: 24px;
+    --radius-md: 18px;
+    --shadow-strong: 0 26px 80px rgba(15, 23, 42, 0.9);
+    --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.7);
+    --transition-fast: 0.25s ease;
+    --transition-slow: 0.45s ease;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    direction: rtl;
+    font-family: "Tajawal", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    background: var(--bg-main);
+    color: var(--text-main);
+}
+
+/* صفحة المساعد: اجعل الخلفية شفافة ليظهر Spline */
+body[data-page="ai"] {
+    background: transparent;
+    color: var(--text-main);
+}
+
+/* نخلي البودي يمتد لأسفل */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* حاوية عامة */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* =========================
+   تظبيط الهيدر العام للموقع
+========================= */
+
+.main-header {
+    background: rgba(15, 23, 42, 0.96) !important;
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+    position: fixed !important; /* تأكيد الثبات */
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 10000 !important; /* فوق كل شيء */
+}
+
+.main-header .brand-top,
+.main-header .brand-sub {
+    color: #e5e7eb !important;
+}
+
+.main-nav a {
+    color: #cbd5e1 !important;
+}
+
+.main-nav a:hover {
+    background: rgba(59, 130, 246, 0.22) !important;
+    color: #3b82f6 !important;
+}
+
+.main-nav a.active {
+    background: #2563eb !important;
+    color: #fff !important;
+}
+
+.nav-toggle {
+    color: #e5e7eb !important;
+}
+
+/* مسافة تحت الهيدر الثابت */
+.ai-page.with-top-space {
+    padding-top: 90px;
+}
+
+/* تحسين الهيدر على الموبايل */
+@media (max-width: 820px) {
+    .main-header {
+        padding-block: 8px !important;
+    }
+
+    .header-inner {
+        padding-inline: 12px;
+    }
+
+    .ai-page.with-top-space {
+        padding-top: 78px;
+    }
+
+    .ai-chat-container {
+        padding-top: 65px; /* مسافة أقل للهيدر على الموبايل */
+    }
+}
+
+/* =========================
+   خلفية نيون مستقبلية
+========================= */
+
+.ai-bg {
+    position: fixed;
+    inset: 0;
+    background: transparent !important;
+    z-index: 10; /* خلف الفقاعات وحقل الكتابة */
+    pointer-events: auto;
+}
+
+/* =========================
+   عنوان المساعد داخل الشات
+========================= */
+
+.ai-header-inline {
+    text-align: center;
+    padding: 18px 20px 16px;
+    background: transparent !important;
+    border-bottom: none;
+    flex-shrink: 0;
+    z-index: 1;
+    pointer-events: none; /* يبقى خلف Spline ولا يحجب التفاعل */
+}
+
+.ai-header-inline h1 {
+    margin: 0 0 6px;
+    font-size: clamp(1.3rem, 2vw + 0.5rem, 1.8rem);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--text-main);
+}
+
+.ai-header-inline h1 span {
+    color: var(--accent);
+}
+
+.ai-header-inline p {
+    margin: 0;
+    font-size: clamp(0.85rem, 1vw, 0.95rem);
+    color: var(--text-muted);
+}
+
+/* قفل ألوان النص داخل تجربة المساعد حتى لا تتأثر بالثيم العام */
+.ai-chat-container,
+.ai-chat-container h1,
+.ai-chat-container h2,
+.ai-chat-container h3,
+.ai-chat-container p {
+    color: #0f172a !important;
+}
+
+.ai-chat-container .message.user,
+.ai-chat-container .message.bot {
+    color: inherit !important;
+}
+
+/* =========================
+   كارد الشات - ملء الشاشة
+========================= */
+
+.ai-chat-container {
+    width: 100%;
+    margin: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(15, 23, 42, 0.98),
+        rgba(15, 23, 42, 0.92)
+    );
+    backdrop-filter: blur(6px);
+    pointer-events: none; /* السماح بالنقر على Spline في المساحات الفارغة */
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh; /* استخدام dvh للدعم الحديث */
+    height: -webkit-fill-available; /* دعم إضافي لـ iOS Safari */
+    z-index: 20; /* أمام الخلفية، لكن شفافة للسماح بظهور Spline */
+    padding-top: 75px; /* مسافة للهيدر */
+}
+
+/* لمعة خفيفة أعلى الكارد */
+.ai-chat-container::before {
+    display: none !important;
+}
+
+.ai-chat-container > * {
+    position: relative;
+    z-index: 1; /* الافتراضي: خلف Spline */
+    pointer-events: none; /* لا تحجب تفاعل Spline افتراضياً */
+}
+
+/* =========================
+   صندوق الرسائل
+========================= */
+
+.chat-box {
+    flex: 1;
+    padding: 16px 18px 20px;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0; /* مهم لـ flex */
+    pointer-events: none; /* اسمح بمرور الماوس إلى Spline تحت الخلفية */
+    z-index: 30; /* يسمح بظهور الفقاعات فوق الخلفية عند داخلها */
+}
+
+/* سكرول أنيق */
+.chat-box::-webkit-scrollbar {
+    width: 6px;
+}
+.chat-box::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: 999px;
+}
+.chat-box::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.55);
+    border-radius: 999px;
+}
+.chat-box::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.8);
+}
+
+/* =========================
+   فقاعات الرسائل
+========================= */
+
+.message {
+    max-width: 78%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 0.97rem;
+    line-height: 1.7;
+    word-wrap: break-word;
+    animation: msg-pop 0.28s ease-out;
+    position: relative;
+    pointer-events: auto; /* إبقاء التفاعل على الفقاعات نفسها */
+    z-index: 30; /* الفقاعات فوق الخلفية */
+}
+
+/* رسالة البوت (يمين الشاشة) */
+.message.bot {
+    margin-left: 0;
+    margin-right: auto;      /* يمين في RTL */
+    background: #0f62fe;
+    color: #f9fafb;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.35);
+}
+
+/* رسالة المستخدم (يسار الشاشة) */
+.message.user {
+    margin-right: 0;
+    margin-left: auto;       /* يسار */
+    background: #ffffff;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    color: #0f172a;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.15);
+}
+
+/* أنيميشن ظهور */
+@keyframes msg-pop {
+    0% {
+        transform: translateY(12px) scale(0.97);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* =========================
+   منطقة الإدخال أسفل الكارد
+========================= */
+
+.chat-input-area {
+    padding: 22px 22px 24px;
+    padding-bottom: max(22px, env(safe-area-inset-bottom));
+    background: transparent !important;
+    border: 3px solid transparent;
+    border-radius: 18px;
+    background:
+        linear-gradient(#0000, #0000) padding-box,
+        linear-gradient(120deg, #0061ff, #00d8ff, #7c3aed, #0061ff) border-box;
+    animation: rotateBorder 6s linear infinite;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 30;
+    box-shadow: 0 -6px 22px rgba(0,0,0,0.12);
+    min-height: 120px;
+    width: 100%;
+    pointer-events: auto; /* يسمح بالتفاعل */
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* مربع الكتابة */
+#userInput {
+    flex: 1;
+    width: 100%;
+    padding: 18px 76px 18px 20px;
+    border-radius: 12px;
+    border: none;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 18px;
+    min-height: 70px;
+    outline: none;
+    font-family: "Tajawal", system-ui, sans-serif;
+    resize: none;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+}
+
+#userInput::placeholder {
+    color: rgba(100, 116, 139, 0.9);
+}
+
+#userInput:focus {
+    background: #ffffff;
+    box-shadow:
+        inset 0 1px 4px rgba(0,0,0,0.16),
+        0 0 0 2px rgba(0, 97, 255, 0.25);
+    color: #0f172a;
+}
+
+/* زر الإرسال – على اليمين مثل واتساب */
+.send-btn {
+    position: absolute;
+    right: 12px;                 /* <<< هنا الجهة */
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0061ff, #7c3aed);
+    color: #ffffff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 97, 255, 0.35);
+    transition:
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast),
+        filter var(--transition-fast),
+        background var(--transition-fast);
+    z-index: 10;
+}
+
+.send-btn i {
+    margin: 0;
+}
+
+.send-btn:hover {
+    transform: translateY(-1px) scale(1.04);
+    box-shadow: 0 10px 26px rgba(0, 97, 255, 0.45);
+    filter: brightness(1.05);
+}
+
+.send-btn:active {
+    transform: translateY(0) scale(0.95);
+    box-shadow: 0 4px 12px rgba(0, 97, 255, 0.35);
+}
+
+.send-btn:focus {
+    outline: 2px solid rgba(0, 97, 255, 0.35);
+    outline-offset: 2px;
+}
+
+/* إطار متحرك للحد */
+@keyframes rotateBorder {
+    0% {
+        background:
+            linear-gradient(#0000, #0000) padding-box,
+            linear-gradient(0deg, #0061ff, #00d8ff, #7c3aed, #0061ff) border-box;
+    }
+    50% {
+        background:
+            linear-gradient(#0000, #0000) padding-box,
+            linear-gradient(180deg, #0061ff, #00d8ff, #7c3aed, #0061ff) border-box;
+    }
+    100% {
+        background:
+            linear-gradient(#0000, #0000) padding-box,
+            linear-gradient(360deg, #0061ff, #00d8ff, #7c3aed, #0061ff) border-box;
+    }
+}
+
+/* =========================
+   الفوتر تحت الصفحة
+========================= */
+
+.ai-footer {
+    text-align: center;
+    padding: 10px 12px 18px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: auto;
+}
+
+.ai-footer strong {
+    color: var(--accent);
+}
+
+/* إخفاء الفوتر في صفحة AI */
+body:has(.ai-chat-container) .main-footer {
+    display: none;
+}
+
+/* =========================
+   إستجابة الشاشات الصغيرة
+========================= */
+
+@media (max-width: 768px) {
+    .ai-header-inline {
+        padding: 14px 16px 12px;
+    }
+
+    .ai-header-inline h1 {
+        font-size: 1.25rem;
+    }
+
+    .ai-header-inline p {
+        font-size: 0.85rem;
+    }
+
+    .ai-chat-container {
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        height: 100vh;
+        height: 100dvh; /* استخدام dvh للدعم الحديث */
+    }
+
+    .chat-box {
+        padding: 14px 12px 16px;
+        gap: 10px;
+    }
+
+    .message {
+        max-width: 85%;
+        font-size: 0.92rem;
+        padding: 11px 14px;
+    }
+
+    .chat-input-area {
+        padding: 24px 24px 28px; /* زيادة المسافة للوضوح */
+        padding-bottom: max(28px, env(safe-area-inset-bottom)); /* دعم safe area في iOS */
+        min-height: 110px; /* ارتفاع أدنى على الموبايل - أكبر بكثير */
+    }
+
+    #userInput {
+        font-size: 19px; /* حجم خط أكبر */
+        padding: 24px 68px 24px 24px; /* مسافة أكبر لزر الإرسال */
+        border-width: 3px;
+        min-height: 68px; /* ارتفاع أدنى - أكبر بكثير */
+    }
+
+    .send-btn {
+        width: 54px; /* حجم أكبر للوضوح */
+        height: 54px;
+        right: 12px;
+        font-size: 1.3rem;
+        border-width: 2px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ai-header-inline {
+        padding: 12px 14px 10px;
+    }
+
+    .ai-header-inline h1 {
+        font-size: 1.15rem;
+    }
+
+    .ai-header-inline p {
+        font-size: 0.8rem;
+    }
+
+    .ai-chat-container {
+        width: 100%;
+        border-radius: 0;
+        height: 100vh;
+    }
+
+    .chat-box {
+        padding: 12px 10px 14px;
+    }
+
+    .message {
+        max-width: 88%;
+        font-size: 0.9rem;
+    }
+
+    .chat-input-area {
+        padding: 22px 22px 26px;
+        padding-bottom: max(26px, env(safe-area-inset-bottom)); /* دعم safe area في iOS */
+        min-height: 105px; /* ارتفاع أدنى على الشاشات الصغيرة - أكبر بكثير */
+    }
+
+    #userInput {
+        font-size: 19px; /* حجم خط أكبر */
+        padding: 22px 64px 22px 22px; /* مسافة كافية لزر الإرسال */
+        border-width: 3px;
+        min-height: 66px; /* ارتفاع أدنى - أكبر بكثير */
+    }
+
+    .send-btn {
+        right: 11px;
+        width: 52px; /* حجم مناسب للوضوح */
+        height: 52px;
+        font-size: 1.25rem;
+        border-width: 2px;
+    }
+}
+
+/* تابلت */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .ai-chat-container {
+        width: 100%;
+        height: 100vh;
+    }
+
+    .message {
+        max-width: 72%;
+    }
+}
+
+/* ديسكتوب كبير */
+@media (min-width: 1440px) {
+    .ai-chat-container {
+        width: 100%;
+        height: 100vh;
+    }
+}
+/* =========================
+   تحسين خلفية Spline 
+========================= */
+
+.spline-bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* خلف الشات وأمام الخلفيات الأخرى */
+    overflow: hidden;
+}
+
+.spline-bg spline-viewer {
+    width: 100vw !important;
+    height: 100vh !important;
+    object-fit: cover;
+    pointer-events: auto !important; /* السماح بتفاعل الماوس */
+    opacity: 1;
+}
+
+/* =========================
+   تفعيل Spline كخلفية حقيقية
+========================= */
+
+/* إزالة أي خلفية فوق Spline (فقط في صفحة المساعد) */
+body[data-page="ai"],
+html[data-theme="dark"] body[data-page="ai"] {
+    background: transparent !important;
+}
+
+/* لا تغمق Spline في الوضع الداكن */
+body[data-page="ai"] .ai-bg,
+html[data-theme="dark"] body[data-page="ai"] .ai-bg {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* إزالة خلفية الشات ليظهر Spline تحتها (مع كسر أي ستايل للوضع الليلي) */
+body[data-page="ai"] .ai-chat-container,
+html[data-theme="dark"] body[data-page="ai"] .ai-chat-container {
+    background: transparent !important;
+    backdrop-filter: none !important;
+}
+
+/* إزالة خلفية صندوق الرسائل */
+body[data-page="ai"] .chat-box,
+html[data-theme="dark"] body[data-page="ai"] .chat-box {
+    background: transparent !important;
+    backdrop-filter: none !important;
+}
+
+/* إزالة غطاء اللمعة الذي يخفي الخلفية */
+body[data-page="ai"] .ai-chat-container::before,
+html[data-theme="dark"] body[data-page="ai"] .ai-chat-container::before {
+    display: none !important;
+}
+
+/* إعادة تفعيل التفاعل مع Spline */
+body[data-page="ai"] .ai-bg spline-viewer,
+body[data-page="ai"] .spline-bg spline-viewer,
+html[data-theme="dark"] body[data-page="ai"] .ai-bg spline-viewer,
+html[data-theme="dark"] body[data-page="ai"] .spline-bg spline-viewer {
+    pointer-events: auto !important;
+}
+
+/* التأكد من أن Spline فوق خلفية الموقع وتحت الشات */
+.spline-bg {
+    z-index: 0 !important;
+}
+
+/* زر تفعيل التفاعل مع الخلفية */
+.spline-activate {
+    position: absolute;
+    inset: auto 16px 16px auto;
+    z-index: 2;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.spline-bg.spline-active spline-viewer {
+    pointer-events: auto !important;
+}
+
+.spline-bg.spline-active .spline-activate {
+    display: none;
+}
+/* =========================
+   نهاية الملف
