@@ -19,12 +19,13 @@ body {
    عنوان المعرض
 ================================ */
 .gallery-section {
-    padding: 140px 0 60px;
+    padding: 120px 0 80px;
+    background: radial-gradient(circle at 20% 0%, rgba(37,99,235,0.06), transparent 35%), radial-gradient(circle at 80% 0%, rgba(249,115,22,0.06), transparent 35%), var(--surface-muted, #f3f4f6);
 }
 
 .gallery-title {
     text-align: center;
-    font-size: 2.4rem;
+    font-size: 2.6rem;
     font-weight: 800;
     margin-bottom: 10px;
 }
@@ -37,10 +38,16 @@ body {
     text-align: center;
     max-width: 750px;
     margin: auto;
-    font-size: 1rem;
-    color: #555;
+    font-size: 1.05rem;
+    color: #444;
     line-height: 1.9;
     margin-bottom: 40px;
+}
+
+.gallery-status {
+    text-align: center;
+    color: #64748b;
+    margin: 0 0 18px;
 }
 
 /* ================================
@@ -48,70 +55,158 @@ body {
 ================================ */
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 28px;
+}
+
+.gallery-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+}
+
+.gallery-group {
+    width: 100%;
+    padding: 0 8px;
+}
+
+.group-hero {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.group-hero-title {
+    margin: 0 0 6px;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.group-hero-title .accent-word {
+    color: var(--accent-primary, #2563eb);
+}
+
+.group-hero-sub {
+    margin: 0;
+    color: #475569;
+    font-size: 1rem;
+    line-height: 1.8;
 }
 
 /* ================================
    بطاقة صورة الإنجاز
 ================================ */
 .gallery-card {
-    background: var(--surface-card, #ffffff);
-    border-radius: 18px;
+    background: #f8fafc;
+    border-radius: 22px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-    transition: 0.3s ease;
+    box-shadow: 0 10px 35px rgba(15, 23, 42, 0.12);
+    transition: 0.25s ease;
     display: flex;
     flex-direction: column;
+    border: 1px solid #e2e8f0;
 }
 
 .gallery-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+    box-shadow: 0 16px 42px rgba(15, 23, 42, 0.18);
 }
 
 /* صورة داخل البطاقة */
 .gallery-img {
+    position: relative;
     width: 100%;
-    height: 240px;
+    aspect-ratio: 4 / 3;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.gallery-count {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.65);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-weight: 700;
 }
 
 /* نص داخل البطاقة */
 .gallery-info {
-    padding: 16px 18px;
+    padding: 18px 20px 22px;
+    text-align: center;
 }
 
 .gallery-info h3 {
     margin: 0 0 8px;
-    font-size: 1.15rem;
-    font-weight: 700;
+    font-size: 1.22rem;
+    font-weight: 800;
     color: #0f172a;
 }
 
 .gallery-info p {
     margin: 0;
     color: #555;
-    font-size: 0.95rem;
+    font-size: 1rem;
     line-height: 1.7;
 }
 
-.gallery-loader {
-    text-align: center;
-    color: #475569;
-    margin-top: 18px;
+.gallery-meta {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
 }
 
-.gallery-empty {
-    margin: 18px 0 0;
-    padding: 14px;
-    background: #f8fafc;
-    border: 1px dashed #cbd5e1;
-    border-radius: 12px;
+.gallery-meta-row {
+    display: flex;
+    justify-content: center;
+}
+
+.gallery-multi {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.gallery-multi .gallery-img {
+    border-radius: 14px;
+    aspect-ratio: 4 / 3;
+}
+
+.gallery-multi figure {
+    margin: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.gallery-multi figcaption {
+    font-size: 0.9rem;
     color: #475569;
-    text-align: center;
+    line-height: 1.6;
+}
+
+.gallery-admin-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.gallery-admin-actions button {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #2563eb;
+    color: #fff;
+    font-weight: 700;
+}
+
+.gallery-admin-actions .danger {
+    background: #dc2626;
 }
 /* ============================
    ضبط عام للصور

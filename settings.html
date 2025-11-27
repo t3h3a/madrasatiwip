@@ -62,7 +62,7 @@
             <div>
                 <p class="eyebrow" data-i18n="settings.eyebrow">التحكم الكامل</p>
                 <h1 data-i18n="settings.heading">خصص تجربتك</h1>
-                <p class="lead" data-i18n="settings.lead">غيّر اللغة، الألوان، وجرّب تسجيل الدخول التجريبي لتوحيد الإعدادات في كل الصفحات.</p>
+                <p class="lead" data-i18n="settings.lead">غيّر اللغة والألوان، ويمكن للأدمن الدخول لإدارة المعرض.</p>
             </div>
             <div class="settings-preview">
                 <i class="fa-solid fa-gear"></i>
@@ -119,54 +119,19 @@
                 </div>
             </section>
 
-            <section class="settings-card admin-card" id="admin-login-section">
+            <section class="settings-card">
                 <div class="card-head">
                     <div>
-                        <p class="eyebrow">صلاحيات الأدمن</p>
-                        <h2>تسجيل دخول الأدمن</h2>
+                        <p class="eyebrow" data-i18n="settings.admin.eyebrow">المسؤول</p>
+                        <h2 data-i18n="settings.admin.title">صلاحيات الأدمن</h2>
                     </div>
+                    <span class="tag" data-i18n="settings.admin.tag">حماية المعرض</span>
                 </div>
-                <div class="admin-login-grid">
-                    <label>
-                        البريد الإلكتروني
-                        <input type="email" id="adminEmail" placeholder="البريد الإلكتروني">
-                    </label>
-                    <label>
-                        كلمة المرور
-                        <input type="password" id="adminPassword" placeholder="كلمة المرور">
-                    </label>
-                    <button type="button" class="admin-btn" onclick="adminLogin()">تسجيل الدخول</button>
-                </div>
-                <div class="admin-status" id="adminStatus"></div>
-            </section>
-
-            <section class="settings-card admin-card" id="admin-panel" style="display:none;">
-                <div class="card-head">
-                    <div>
-                        <p class="eyebrow">لوحة إدارة المعرض</p>
-                        <h2>إدارة معرض الإنجازات</h2>
-                    </div>
-                </div>
-                <div class="admin-actions">
-                    <button onclick="logoutAdmin()" class="admin-btn logout-btn">تسجيل الخروج</button>
-                </div>
-
-                <div class="upload-section">
-                    <label>
-                        صورة الإنجاز
-                        <input type="file" id="uploadImage" accept="image/*" multiple>
-                    </label>
-                    <div class="captions-helper">أضف عنواناً لكل صورة تم اختيارها:</div>
-                    <div id="captionsContainer" class="captions-list"></div>
-                    <label>
-                        عنوان / وصف الإنجاز
-                        <input type="text" id="imageTitle" placeholder="عنوان الإنجاز">
-                    </label>
-                    <button type="button" class="admin-btn" onclick="uploadPost()">إضافة منشور</button>
-                </div>
-
-                <div id="postsList" class="posts-list"></div>
-                <div class="admin-status" id="adminPostsStatus"></div>
+                <p class="muted" data-i18n="settings.admin.note">تسجيل الدخول مخصص للبريد المصرّح به لإدارة منشورات المعرض فقط.</p>
+                <button type="button" class="admin-login-btn" onclick="location.href='admin-login.html'">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span data-i18n="settings.admin.button">تسجيل دخول الأدمن</span>
+                </button>
             </section>
         </div>
     </div>
@@ -191,18 +156,6 @@
       </div>
     </div>
 </footer>
-
-<!-- Firebase base scripts (compat for namespaced API) -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-
-<!-- Config must come BEFORE settings.js -->
-<script src="assets/js/firebase-config.js"></script>
-
-<!-- Settings logic (admin panel logic) -->
-<script src="assets/js/settings.js"></script>
 
 <script src="assets/js/main.js"></script>
 <script src="assets/js/dark-mode.js"></script>

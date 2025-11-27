@@ -1,144 +1,441 @@
-import { auth, db, storage } from "./firebase-data.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 import {
-    addDoc,
+    auth,
+    db,
+    ADMIN_EMAIL,
+    ADMIN_UID,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged,
     collection,
+    addDoc,
+    deleteDoc,
     doc,
-    onSnapshot,
     orderBy,
     query,
-    serverTimestamp,
-    deleteDoc
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-import {
-    ref,
-    uploadBytes,
-    getDownloadURL,
-    deleteObject
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
+    onSnapshot,
+    updateDoc,
+    setDoc,
+    getDoc
+} from "./firebase-config.js";
 
-const ADMIN_UID = "aCx24n18eYczQo2DOM7B61iWPsv2";
+const loginForm = document.getElementById("adminLoginForm");
+const emailInput = document.getElementById("adminEmail");
+const passInput = document.getElementById("adminPassword");
+const logoutBtn = document.getElementById("adminLogout");
+const uploadBtn = document.getElementById("addPostBtn");
+const titleInput = document.getElementById("postTitle");
+const fileInput = document.getElementById("postImage");
+const selectedList = document.getElementById("selectedImages");
+const postsWrap = document.getElementById("adminPosts");
+const loginCard = document.getElementById("adminLoginCard");
+const panelCard = document.getElementById("adminPanelCard");
+const statusEl = document.getElementById("adminStatus");
+const headingInput = document.getElementById("galleryHeading");
+const introInput = document.getElementById("galleryIntro");
+const saveHeroBtn = document.getElementById("saveHeroBtn");
+const postGroupTitleInput = document.getElementById("postGroupTitle");
+const postGroupIntroInput = document.getElementById("postGroupIntro");
+const slotGrid = document.getElementById("slotGrid");
+const saveSlotsBtn = document.getElementById("saveSlotsBtn");
+const slotsStatus = document.getElementById("slotsStatus");
+const slotGroupTitleInput = document.getElementById("slotGroupTitle");
+const slotGroupIntroInput = document.getElementById("slotGroupIntro");
+const SLOT_COUNT = 6;
+let slotState = Array.from({ length: SLOT_COUNT }, () => ({ image: "", title: "", caption: "" }));
+const FALLBACK_EMAIL = "btecmaad@gmail.com";
+const FALLBACK_PASS = "123456789102008";
 
-const titleInput = document.getElementById("titleInput");
-const photoInput = document.getElementById("photoInput");
-const statusEl = document.getElementById("uploadStatus");
-const listEl = document.getElementById("uploadsList");
-const emptyEl = document.getElementById("emptyState");
-const uidEl = document.getElementById("adminUid");
-
-if (uidEl) uidEl.textContent = ADMIN_UID;
-
-function setStatus(message, type = "info") {
-    if (!statusEl) return;
-    statusEl.textContent = message || "";
-    statusEl.dataset.type = type;
+function clearLoginInputs() {
+    if (emailInput) emailInput.value = "";
+    if (passInput) passInput.value = "";
 }
 
-async function handleUpload() {
-    const file = photoInput?.files?.[0];
-    const title = titleInput?.value?.trim();
+// Cloudinary preset as configured in the provided screenshot
+const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dzrwjhqzu/image/upload";
+const CLOUDINARY_PRESET = "gallery_app";
+const CLOUDINARY_FOLDER = "app_gallery";
 
-    if (!file || !title) {
-        setStatus("أدخل عنواناً واختر صورة للرفع.", "error");
+function setStatus(text, isError = false) {
+    if (!statusEl) return;
+    statusEl.textContent = text || "";
+    statusEl.className = isError ? "status error" : "status";
+    if (text) statusEl.classList.add("show");
+}
+
+function setSlotsStatus(text, isError = false) {
+    if (!slotsStatus) return;
+    slotsStatus.textContent = text || "";
+    slotsStatus.className = isError ? "status error" : "status";
+    if (text) slotsStatus.classList.add("show");
+}
+
+async function adminLogin(e) {
+    e?.preventDefault();
+    const email = emailInput?.value?.trim();
+    const pass = passInput?.value || "";
+    if (!email || !pass) {
+        setStatus("أدخل البريد وكلمة المرور", true);
         return;
     }
-
     try {
-        setStatus("جاري الرفع...", "info");
-        const storagePath = `gallery/${Date.now()}-${file.name}`;
-        const storageRef = ref(storage, storagePath);
-        await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
-
-        await addDoc(collection(db, "gallery"), {
-            title,
-            image: url,
-            storagePath,
-            createdAt: serverTimestamp()
-        });
-
-        setStatus("تم الرفع بنجاح!", "success");
-        if (titleInput) titleInput.value = "";
-        if (photoInput) photoInput.value = "";
+        const cred = await signInWithEmailAndPassword(auth, email, pass);
+        const userEmail = cred?.user?.email || "";
+        const isAdminUser = (userEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase()) || (cred?.user?.uid === ADMIN_UID);
+        if (!isAdminUser) {
+            await signOut(auth);
+            setStatus("هذا الحساب ليس مخولاً كأدمن", true);
+        }
     } catch (err) {
-        console.error(err);
-        setStatus("تعذر الرفع، حاول مجدداً.", "error");
-    }
-}
-
-window.upload = handleUpload;
-
-async function handleDelete(docId, storagePath) {
-    if (!confirm("حذف هذا الإنجاز نهائياً؟")) return;
-    try {
-        await deleteDoc(doc(db, "gallery", docId));
-        if (storagePath) {
+        if (err?.code === "auth/user-not-found" && email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
             try {
-                await deleteObject(ref(storage, storagePath));
-            } catch (err) {
-                console.warn("تعذر حذف ملف التخزين:", err);
+                await createUserWithEmailAndPassword(auth, email, pass);
+                setStatus("تم إنشاء حساب الأدمن، أعد المحاولة");
+                return;
+            } catch (createErr) {
+                console.error(createErr);
+                setStatus("تعذر إنشاء حساب الأدمن", true);
+                return;
             }
         }
-        setStatus("تم الحذف.", "success");
+        // fallback محلي إذا فشل Firebase والبيانات مطابقة
+        if (email.toLowerCase() === FALLBACK_EMAIL.toLowerCase() && pass === FALLBACK_PASS) {
+            localStorage.setItem("fakeAdmin", "true");
+            togglePanel(true);
+            setStatus("");
+            return;
+        }
+        console.error(err);
+        setStatus(err?.message || "تعذر تسجيل الدخول", true);
+    }
+}
+
+async function logoutAdmin() {
+    try {
+        await signOut(auth);
+        clearFormState();
+        clearLoginInputs();
+        setStatus("تم تسجيل الخروج");
     } catch (err) {
         console.error(err);
-        setStatus("تعذر الحذف.", "error");
+        setStatus("تعذر تسجيل الخروج", true);
     }
+    localStorage.removeItem("fakeAdmin");
 }
 
-function renderGallery(snapshot) {
-    if (!listEl) return;
-    listEl.innerHTML = "";
-    const isEmpty = snapshot.empty;
-    if (emptyEl) emptyEl.style.display = isEmpty ? "block" : "none";
-    if (isEmpty) return;
-
-    snapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const card = document.createElement("div");
-        card.className = "gallery-card";
-
-        const imgDiv = document.createElement("div");
-        imgDiv.className = "gallery-img";
-        imgDiv.style.backgroundImage = `url('${data.image || ""}')`;
-        card.appendChild(imgDiv);
-
-        const info = document.createElement("div");
-        info.className = "gallery-info";
-        info.innerHTML = `
-            <h3>${data.title || "بدون عنوان"}</h3>
-            <p>${data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString() : ""}</p>
-        `;
-        card.appendChild(info);
-
-        const actions = document.createElement("div");
-        actions.className = "admin-actions";
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "حذف";
-        delBtn.addEventListener("click", () => handleDelete(docSnap.id, data.storagePath));
-        actions.appendChild(delBtn);
-        card.appendChild(actions);
-
-        listEl.appendChild(card);
-    });
-}
-
-function startListening() {
-    const q = query(collection(db, "gallery"), orderBy("createdAt", "desc"));
-    return onSnapshot(q, renderGallery, (err) => {
-        console.error(err);
-        setStatus("تعذر جلب البيانات.", "error");
-    });
-}
-
-let unsubscribe = null;
-
-onAuthStateChanged(auth, (user) => {
-    if (!user || user.uid !== ADMIN_UID) {
-        window.location.href = "/";
+async function uploadPost() {
+    const title = titleInput?.value?.trim() || "";
+    const groupTitle = postGroupTitleInput?.value?.trim() || title || "معرض جديد";
+    const groupIntro = postGroupIntroInput?.value?.trim() || "";
+    const files = fileInput?.files ? Array.from(fileInput.files) : [];
+    if (!files.length) {
+        setStatus("اختر صورة واحدة على الأقل", true);
         return;
     }
-    document.body.classList.add("admin-ready");
-    if (unsubscribe) unsubscribe();
-    unsubscribe = startListening();
-});
+    if (!groupTitle) {
+        setStatus("أدخل عنوان المعرض", true);
+        return;
+    }
+    const captions = Array.from(document.querySelectorAll(".image-caption")).map(input => input.value.trim());
+    setStatus("...جاري الرفع");
+    try {
+        const uploadedImages = [];
+        for (const [idx, file] of files.entries()) {
+            const imageUrl = await uploadToCloudinary(file);
+            uploadedImages.push({
+                url: imageUrl,
+                caption: captions[idx] || ""
+            });
+        }
+        const groupId = `post-${Date.now()}`;
+
+        await addDoc(collection(db, "gallery"), {
+            title: title || "منشور بدون عنوان",
+            images: uploadedImages,
+            createdAt: Date.now(),
+            createdBy: auth.currentUser?.email || "",
+            groupId,
+            groupTitle,
+            groupIntro
+        });
+
+        clearFormState();
+        if (postGroupTitleInput) postGroupTitleInput.value = "";
+        if (postGroupIntroInput) postGroupIntroInput.value = "";
+        setStatus("تمت إضافة المنشور مع الصور");
+    } catch (err) {
+        console.error(err);
+        setStatus("تعذر رفع المنشور", true);
+    }
+}
+
+async function saveHeroText() {
+    const heading = headingInput?.value?.trim() || "معرض الإنجازات";
+    const intro = introInput?.value?.trim() || "";
+    setStatus("...حفظ العنوان والوصف");
+    try {
+        await setDoc(doc(db, "config", "gallery"), { heading, intro }, { merge: true });
+        setStatus("تم حفظ العنوان/الوصف");
+    } catch (err) {
+        console.error(err);
+        setStatus("تعذر حفظ العنوان/الوصف", true);
+    }
+}
+
+async function loadHeroText() {
+    try {
+        const snap = await getDoc(doc(db, "config", "gallery"));
+        if (snap.exists()) {
+            const data = snap.data();
+            if (headingInput && data.heading) headingInput.value = data.heading;
+            if (introInput && data.intro) introInput.value = data.intro;
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+function buildSlotsForm() {
+    if (!slotGrid) return;
+    slotGrid.innerHTML = "";
+    for (let i = 0; i < SLOT_COUNT; i++) {
+        const card = document.createElement("div");
+        card.className = "slot-card";
+        card.innerHTML = `
+            <div class="slot-preview" data-slot-preview="${i}">صورة ${i + 1}</div>
+            <input type="file" accept="image/*" data-slot-file="${i}">
+            <input type="text" placeholder="عنوان البطاقة" data-slot-title="${i}">
+            <textarea rows="2" placeholder="وصف مختصر" data-slot-caption="${i}"></textarea>
+        `;
+        slotGrid.appendChild(card);
+    }
+}
+
+function hydrateSlotsForm() {
+    if (!slotGrid) return;
+    slotState.forEach((item, idx) => {
+        const preview = slotGrid.querySelector(`[data-slot-preview="${idx}"]`);
+        const title = slotGrid.querySelector(`[data-slot-title="${idx}"]`);
+        const caption = slotGrid.querySelector(`[data-slot-caption="${idx}"]`);
+        if (preview && item.image) {
+            preview.style.backgroundImage = `url('${item.image}')`;
+            preview.textContent = "";
+        }
+        if (title) title.value = item.title || "";
+        if (caption) caption.value = item.caption || "";
+    });
+}
+
+async function saveSlots() {
+    if (!slotGrid) return;
+    setSlotsStatus("...جاري النشر");
+    try {
+        const groupId = `batch-${Date.now()}`;
+        const groupTitle = slotGroupTitleInput?.value?.trim() || "معرض جديد";
+        const groupIntro = slotGroupIntroInput?.value?.trim() || "";
+
+        for (let i = 0; i < SLOT_COUNT; i++) {
+            const titleEl = slotGrid.querySelector(`[data-slot-title="${i}"]`);
+            const captionEl = slotGrid.querySelector(`[data-slot-caption="${i}"]`);
+            const fileEl = slotGrid.querySelector(`[data-slot-file="${i}"]`);
+
+            let imageUrl = slotState[i]?.image || "";
+            if (fileEl?.files?.length) {
+                imageUrl = await uploadToCloudinary(fileEl.files[0]);
+            }
+
+            const title = titleEl?.value?.trim() || "";
+            const caption = captionEl?.value?.trim() || "";
+
+            if (!imageUrl) continue; // تخطى البطاقة الفارغة
+
+            await addDoc(collection(db, "gallery"), {
+                title: title || "منشور بدون عنوان",
+                images: [{ url: imageUrl, caption }],
+                createdAt: Date.now(),
+                createdBy: auth.currentUser?.email || "",
+                groupId,
+                groupTitle,
+                groupIntro
+            });
+        }
+
+        // بعد النشر، صَفّر الحقول والملفات
+        slotState = Array.from({ length: SLOT_COUNT }, () => ({ image: "", title: "", caption: "" }));
+        buildSlotsForm();
+        if (slotGroupTitleInput) slotGroupTitleInput.value = "";
+        if (slotGroupIntroInput) slotGroupIntroInput.value = "";
+        setSlotsStatus("تم نشر البطاقات");
+    } catch (err) {
+        console.error(err);
+        setSlotsStatus("تعذر حفظ البطاقات", true);
+    }
+}
+
+async function deletePost(id) {
+    try {
+        await deleteDoc(doc(db, "gallery", id));
+    } catch (err) {
+        console.error(err);
+        setStatus("تعذر حذف المنشور", true);
+    }
+}
+
+async function editPost(id, data) {
+    const currentTitle = data.title || "منشور بدون عنوان";
+    const newTitle = prompt("تعديل عنوان المنشور", currentTitle);
+    if (newTitle === null) return;
+
+    const imagesArray = Array.isArray(data.images)
+        ? data.images
+        : (data.image ? [{ url: data.image, caption: data.caption || "" }] : []);
+
+    const updatedImages = [];
+    for (const [idx, img] of imagesArray.entries()) {
+        const newCaption = prompt(`وصف الصورة رقم ${idx + 1}`, img.caption || "");
+        updatedImages.push({
+            url: img.url || img,
+            caption: newCaption === null ? (img.caption || "") : newCaption
+        });
+    }
+
+    try {
+        await updateDoc(doc(db, "gallery", id), {
+            title: newTitle.trim() || currentTitle,
+            images: updatedImages
+        });
+        setStatus("تم تحديث المنشور");
+    } catch (err) {
+        console.error(err);
+        setStatus("تعذر تعديل المنشور", true);
+    }
+}
+
+function renderPosts(snapshot) {
+    if (!postsWrap) return;
+    postsWrap.innerHTML = "";
+    snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const createdAt = data.createdAt ? new Date(data.createdAt).toLocaleString() : "";
+        const images = Array.isArray(data.images)
+            ? data.images
+            : (data.image ? [{ url: data.image, caption: data.caption || "" }] : []);
+        const card = document.createElement("article");
+        card.className = "admin-post";
+        card.innerHTML = `
+            <div class="post-head">
+                <div>
+                    <p class="eyebrow">${createdAt}</p>
+                    <h3>${data.title || "منشور بدون عنوان"}</h3>
+                </div>
+                <div class="admin-actions">
+                    <button data-action="edit" data-id="${docSnap.id}">تعديل</button>
+                    <button class="danger" data-action="delete" data-id="${docSnap.id}">حذف</button>
+                </div>
+            </div>
+            <div class="post-body">
+                ${images.length ? `
+                    <div class="post-gallery">
+                        ${images.map(img => `
+                            <figure>
+                                <img src="${img.url || img}" alt="${data.title || ""}">
+                                <figcaption>${img.caption || ""}</figcaption>
+                            </figure>
+                        `).join("")}
+                    </div>
+                ` : ""}
+            </div>
+        `;
+        postsWrap.appendChild(card);
+    });
+
+    postsWrap.querySelectorAll("button[data-action=\"delete\"]").forEach(btn => {
+        btn.addEventListener("click", () => deletePost(btn.dataset.id));
+    });
+
+    postsWrap.querySelectorAll("button[data-action=\"edit\"]").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const snap = snapshot.docs.find(d => d.id === btn.dataset.id);
+            if (snap) editPost(btn.dataset.id, snap.data());
+        });
+    });
+}
+
+function subscribePosts() {
+    const q = query(collection(db, "gallery"), orderBy("createdAt", "desc"));
+    return onSnapshot(q, renderPosts, (err) => {
+        console.error(err);
+        setStatus("تعذر جلب المنشورات", true);
+    });
+}
+
+function renderSelectedFiles() {
+    if (!selectedList || !fileInput?.files?.length) {
+        if (selectedList) selectedList.innerHTML = "";
+        return;
+    }
+    selectedList.innerHTML = "";
+    Array.from(fileInput.files).forEach((file, idx) => {
+        const row = document.createElement("div");
+        row.className = "image-row";
+        row.innerHTML = `
+            <div class="file-name">${file.name}</div>
+            <input type="text" class="image-caption" data-idx="${idx}" placeholder="وصف الصورة (اختياري)">
+        `;
+        selectedList.appendChild(row);
+    });
+}
+
+function clearFormState() {
+    if (titleInput) titleInput.value = "";
+    if (fileInput) fileInput.value = "";
+    if (selectedList) selectedList.innerHTML = "";
+}
+
+function togglePanel(isAdmin) {
+    if (loginCard) loginCard.style.display = isAdmin ? "none" : "grid";
+    if (panelCard) panelCard.style.display = isAdmin ? "grid" : "none";
+}
+
+function wireAdminUI() {
+    if (loginForm) loginForm.addEventListener("submit", adminLogin);
+    if (logoutBtn) logoutBtn.addEventListener("click", logoutAdmin);
+    if (uploadBtn) uploadBtn.addEventListener("click", uploadPost);
+    if (fileInput) fileInput.addEventListener("change", renderSelectedFiles);
+    if (saveHeroBtn) saveHeroBtn.addEventListener("click", saveHeroText);
+    if (saveSlotsBtn) saveSlotsBtn.addEventListener("click", saveSlots);
+
+    let unsubscribe = null;
+    onAuthStateChanged(auth, (user) => {
+        const fakeAdmin = localStorage.getItem("fakeAdmin") === "true";
+        const ok = (!!user && (user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase() || user.uid === ADMIN_UID)) || fakeAdmin;
+        togglePanel(ok);
+        if (ok) {
+            setStatus("");
+            loadHeroText();
+            buildSlotsForm();
+            unsubscribe = unsubscribe || subscribePosts();
+        } else {
+            if (user && !ok) signOut(auth);
+            if (unsubscribe) unsubscribe();
+            unsubscribe = null;
+            if (postsWrap) postsWrap.innerHTML = "";
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", wireAdminUI);
+
+export { adminLogin, logoutAdmin, uploadPost, renderPosts, deletePost, subscribePosts };
+
+async function uploadToCloudinary(file) {
+    const form = new FormData();
+    form.append("file", file);
+    form.append("upload_preset", CLOUDINARY_PRESET);
+    form.append("folder", CLOUDINARY_FOLDER);
+    const res = await fetch(CLOUDINARY_URL, { method: "POST", body: form });
+    if (!res.ok) throw new Error("upload-failed");
+    const json = await res.json();
+    if (!json.secure_url) throw new Error("no-url");
+    return json.secure_url;
+}

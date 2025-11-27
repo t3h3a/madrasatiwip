@@ -29,8 +29,7 @@ function buildMobileShell() {
         { key: "btec", href: "btec.html", icon: "fa-solid fa-graduation-cap", label: "BTEC" },
         { key: "calculator", href: "calculator.html", icon: "fa-solid fa-calculator", label: "حاسبة" },
         { key: "videos", href: "videos.html", icon: "fa-regular fa-circle-play", label: "فيديو" },
-        { key: "ai", href: "ai.html", icon: "fa-solid fa-robot", label: "المساعد" },
-        { key: "profile", href: "profile.html", icon: "fa-regular fa-id-badge", label: "الملف الشخصي" }
+        { key: "ai", href: "ai.html", icon: "fa-solid fa-robot", label: "المساعد" }
     ];
 
     const shell = document.createElement("div");
@@ -43,7 +42,6 @@ function buildMobileShell() {
                 <span>مدرستي</span>
             </div>
             <div class="mobile-actions">
-                <a href="profile.html" aria-label="الملف الشخصي" class="mobile-avatar">أ</a>
                 <a href="settings.html" aria-label="الإعدادات"><i class="fa-solid fa-gear"></i></a>
                 <button id="themeToggleMobile" aria-label="تبديل الوضع"><i class="fa-solid fa-circle-half-stroke"></i></button>
             </div>
@@ -60,15 +58,6 @@ function buildMobileShell() {
         </div>
     `;
     document.body.prepend(shell);
-
-    const profileData = (() => {
-        try { return JSON.parse(localStorage.getItem("madrasati_profile_v1")) || null; }
-        catch { return null; }
-    })();
-    const avatarLink = shell.querySelector(".mobile-avatar");
-    if (avatarLink && profileData?.name) {
-        avatarLink.textContent = profileData.name.charAt(0).toUpperCase();
-    }
 }
 
 
@@ -133,29 +122,12 @@ const translations = {
         "settings.title": "الإعدادات",
         "settings.eyebrow": "التحكم الكامل",
         "settings.heading": "خصص تجربتك",
-        "settings.lead": "غيّر اللغة، الألوان، وجرّب تسجيل الدخول التجريبي لتوحيد الإعدادات في كل الصفحات.",
-        "settings.login.eyebrow": "الحساب",
-        "settings.login.tag": "عرض تجريبي",
-        "settings.login.title": "تسجيل الدخول",
-        "settings.login.note": "البيانات تحفظ محلياً لتجربة الواجهة فقط.",
-        "settings.login.heroPill": "The easiest way to ...",
-        "settings.login.heroTitle": "End to end encrypted transfers",
-        "settings.login.heroDesc": "الرجاء تسجيل الدخول للوصول إلى الموقع.",
-        "settings.login.email": "البريد الإلكتروني",
-        "settings.login.password": "كلمة المرور",
-        "settings.login.submit": "تسجيل الدخول",
-        "settings.login.google": "تسجيل الدخول مع Google",
-        "settings.login.or": "أو",
-        "settings.login.stub": "تم حفظ بيانات الدخول محلياً (عرض فقط).",
-        "settings.login.signedOut": "أنت غير مسجل دخول حالياً",
-        "settings.login.signedIn": "مسجّل دخول كـ {email}",
-        "settings.logout": "تسجيل الخروج",
-        "settings.profile.eyebrow": "الملف الشخصي",
-        "settings.profile.title": "تحديث بياناتك",
-        "settings.profile.note": "حدّث اسم العرض وحمّل صورة ليظهر مع تعليقاتك.",
-        "settings.profile.name": "اسم العرض",
-        "settings.profile.photo": "صورة الملف",
-        "settings.profile.save": "حفظ",
+        "settings.lead": "غيّر اللغة والألوان، ويمكن للأدمن الدخول لإدارة المعرض.",
+        "settings.admin.eyebrow": "المسؤول",
+        "settings.admin.title": "صلاحيات الأدمن",
+        "settings.admin.tag": "حماية المعرض",
+        "settings.admin.note": "تسجيل الدخول مخصص للبريد المصرّح به لإدارة منشورات المعرض فقط.",
+        "settings.admin.button": "تسجيل دخول الأدمن",
         "settings.colors.eyebrow": "الألوان",
         "settings.colors.title": "ألوان الصفحات",
         "settings.colors.tag": "متزامنة مع كل الصفحات",
@@ -233,29 +205,12 @@ const translations = {
         "settings.title": "Settings",
         "settings.eyebrow": "Full control",
         "settings.heading": "Personalize your experience",
-        "settings.lead": "Change language, colors, and try the mock sign-in so everything stays consistent across pages.",
-        "settings.login.eyebrow": "Account",
-        "settings.login.tag": "Demo only",
-        "settings.login.title": "Sign in",
-        "settings.login.note": "Data is stored locally for a front-end preview only.",
-        "settings.login.heroPill": "The easiest way to ...",
-        "settings.login.heroTitle": "End to end encrypted transfers",
-        "settings.login.heroDesc": "Please sign in to access the site.",
-        "settings.login.email": "Email address",
-        "settings.login.password": "Password",
-        "settings.login.submit": "Sign in",
-        "settings.login.google": "Continue with Google",
-        "settings.login.or": "or",
-        "settings.login.stub": "Login details saved locally (UI only).",
-        "settings.login.signedOut": "You are not signed in",
-        "settings.login.signedIn": "Signed in as {email}",
-        "settings.logout": "Sign out",
-        "settings.profile.eyebrow": "Profile",
-        "settings.profile.title": "Update your info",
-        "settings.profile.note": "Update display name and upload an image to show beside your comments.",
-        "settings.profile.name": "Display name",
-        "settings.profile.photo": "Profile photo",
-        "settings.profile.save": "Save",
+        "settings.lead": "Adjust language and colors; admins can sign in to manage the gallery.",
+        "settings.admin.eyebrow": "Admin",
+        "settings.admin.title": "Admin access",
+        "settings.admin.tag": "Gallery protection",
+        "settings.admin.note": "Sign-in is restricted to the authorized email for managing gallery posts only.",
+        "settings.admin.button": "Admin sign-in",
         "settings.colors.eyebrow": "Colors",
         "settings.colors.title": "Color themes",
         "settings.colors.tag": "Syncs across all pages",
@@ -407,16 +362,8 @@ function loadGoogleTranslate() {
 function initSettingsPage() {
     if (document.body.dataset.page !== "settings") return;
 
-    const loginForm = document.getElementById("settingsLogin");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const statusEl = document.getElementById("settingsStatus");
-    const googleMock = document.getElementById("googleMock");
     const paletteCards = document.querySelectorAll("[data-color-scheme]");
     const langButtons = document.querySelectorAll(".settings-lang button");
-
-    if (googleMock) {
-        googleMock.setAttribute("disabled", "disabled");
-    }
 
     paletteCards.forEach(card => {
         card.addEventListener("click", () => applyColorScheme(card.dataset.colorScheme));
