@@ -97,6 +97,22 @@ body {
     font-size: 0.95rem;
     line-height: 1.7;
 }
+
+.gallery-loader {
+    text-align: center;
+    color: #475569;
+    margin-top: 18px;
+}
+
+.gallery-empty {
+    margin: 18px 0 0;
+    padding: 14px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    color: #475569;
+    text-align: center;
+}
 /* ============================
    ضبط عام للصور
 ============================ */
