@@ -299,6 +299,147 @@
     color: #475569;
 }
 
+.admin-card .admin-login-grid,
+.admin-card .upload-section {
+    display: grid;
+    gap: 12px;
+}
+
+.captions-helper {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.captions-list {
+    display: grid;
+    gap: 8px;
+}
+
+.caption-item {
+    display: grid;
+    gap: 6px;
+}
+
+.admin-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.admin-card label {
+    display: grid;
+    gap: 6px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.admin-card input[type="email"],
+.admin-card input[type="password"],
+.admin-card input[type="text"],
+.admin-card input[type="file"] {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    font-size: 1rem;
+}
+
+.admin-btn {
+    padding: 12px 14px;
+    border: none;
+    border-radius: 12px;
+    background: var(--accent-primary, #2563eb);
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 10px 22px rgba(37,99,235,0.22);
+}
+
+.admin-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(37,99,235,0.26);
+}
+
+.admin-status {
+    margin-top: 8px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.admin-status[data-type="error"] { color: #b91c1c; }
+.admin-status[data-type="success"] { color: #15803d; }
+
+.posts-list {
+    margin-top: 16px;
+    display: grid;
+    gap: 10px;
+}
+
+.post-row {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.post-thumb {
+    width: 80px;
+    height: 60px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    background-color: #e2e8f0;
+}
+
+.post-info {
+    display: grid;
+    gap: 4px;
+}
+
+.post-info span {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+.post-delete {
+    border: 1px solid #fecdd3;
+    color: #b91c1c;
+    background: #fff1f2;
+    border-radius: 10px;
+    padding: 8px 10px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.logout-btn {
+    background: #0f172a;
+    box-shadow: 0 10px 22px rgba(15,23,42,0.2);
+}
+
+.logout-btn:hover {
+    box-shadow: 0 12px 28px rgba(15,23,42,0.25);
+}
+
+.post-delete:hover {
+    background: #ffe4e6;
+    color: #991b1b;
+}
+
+.empty-row {
+    text-align: center;
+    padding: 12px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+    color: #475569;
+}
+
 @media (max-width: 820px) {
     .settings-hero {
         flex-direction: column;
