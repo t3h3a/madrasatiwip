@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build:admin": "esbuild assets/js/admin.js --bundle --outfile=assets/js/admin.bundle.js --minify --target=chrome60,firefox60,safari11,edge18,es2015"
+    "build:admin": "esbuild assets/js/admin.js --bundle --outfile=assets/js/admin.bundle.js --minify --target=chrome60,firefox60,safari11,edge18,es2015",
+    "build:admin-login": "esbuild assets/js/admin-login.js --bundle --outfile=assets/js/admin-login.bundle.js --minify --target=chrome60,firefox60,safari11,edge18,es2015",
+    "build": "npm run build:admin && npm run build:admin-login"
   },
   "dependencies": {
     "firebase": "^12.6.0"

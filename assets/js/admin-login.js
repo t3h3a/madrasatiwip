@@ -1,5 +1,4 @@
-import { auth, ADMIN_EMAIL, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "./firebase-config.js";
-import { signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { auth, ADMIN_EMAIL, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "./firebase-config.js";
 
 const FALLBACK_EMAIL = "btecmaad@gmail.com";
 const FALLBACK_PASS = "123456789102008";
