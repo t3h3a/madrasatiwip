@@ -1,11 +1,11 @@
-import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import {
     getAuth,
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged,
     createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+} from "firebase/auth";
 import {
     getFirestore,
     collection,
@@ -19,13 +19,13 @@ import {
     updateDoc,
     setDoc,
     getDoc
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+} from "firebase/firestore";
 import {
     getStorage,
     ref,
     uploadBytes,
     getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
+} from "firebase/storage";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBJDPg-KcDOrQN8VAGM0B7GEg2MgstGZKA",
