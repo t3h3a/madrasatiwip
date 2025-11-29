@@ -59,6 +59,32 @@ let unsubscribeVideos = null;
 const FALLBACK_EMAIL = "btecmaad@gmail.com";
 const FALLBACK_PASS = "123456789102008";
 
+// تخزين آمن يعمل حتى لو كان localStorage غير متاح (مثل وضع التصفح الخاص في بعض المتصفحات)
+const memoryStore = {};
+const safeStorage = {
+    get(key) {
+        try {
+            return localStorage.getItem(key);
+        } catch {
+            return memoryStore[key] || null;
+        }
+    },
+    set(key, value) {
+        try {
+            localStorage.setItem(key, value);
+        } catch {
+            memoryStore[key] = value;
+        }
+    },
+    remove(key) {
+        try {
+            localStorage.removeItem(key);
+        } catch {
+            delete memoryStore[key];
+        }
+    }
+};
+
 function clearLoginInputs() {
     if (emailInput) emailInput.value = "";
     if (passInput) passInput.value = "";
@@ -123,7 +149,7 @@ async function adminLogin(e) {
         }
         // fallback محلي إذا فشل Firebase والبيانات مطابقة
         if (email.toLowerCase() === FALLBACK_EMAIL.toLowerCase() && pass === FALLBACK_PASS) {
-            localStorage.setItem("fakeAdmin", "true");
+            safeStorage.set("fakeAdmin", "true");
             togglePanel(true);
             setStatus("");
             return;
@@ -143,7 +169,7 @@ async function logoutAdmin() {
         console.error(err);
         setStatus("تعذر تسجيل الخروج", true);
     }
-    localStorage.removeItem("fakeAdmin");
+    safeStorage.remove("fakeAdmin");
 }
 
 async function uploadPost() {
@@ -627,12 +653,12 @@ function activateTab(tabId) {
     tabPanels.forEach(panel => {
         panel.classList.toggle("active", panel.id === tabId);
     });
-    localStorage.setItem("adminTab", tabId);
+    safeStorage.set("adminTab", tabId);
 }
 
 function initTabs() {
     if (!tabButtons.length || !tabPanels.length) return;
-    const saved = localStorage.getItem("adminTab");
+    const saved = safeStorage.get("adminTab");
     const defaultTab = (saved && document.getElementById(saved)) ? saved : "galleryTab";
     activateTab(defaultTab);
     tabButtons.forEach(btn => {
@@ -655,7 +681,7 @@ function wireAdminUI() {
     initTabs();
 
     onAuthStateChanged(auth, (user) => {
-        const fakeAdmin = localStorage.getItem("fakeAdmin") === "true";
+        const fakeAdmin = safeStorage.get("fakeAdmin") === "true";
         const ok = (!!user && (user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase() || user.uid === ADMIN_UID)) || fakeAdmin;
         togglePanel(ok);
         if (ok) {
@@ -667,7 +693,7 @@ function wireAdminUI() {
             unsubscribeVideos = unsubscribeVideos || subscribeAdminVideos();
         } else {
             if (user && !ok) signOut(auth);
-            localStorage.removeItem("fakeAdmin");
+            safeStorage.remove("fakeAdmin");
             if (unsubscribeGallery) unsubscribeGallery();
             if (unsubscribeVideos) unsubscribeVideos();
             unsubscribeGallery = null;
