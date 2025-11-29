@@ -1,8 +1,12 @@
 import { auth, db, storage, ADMIN_EMAIL } from "./firebase-core.js";
+
+// 🔥 بدل gstatic → الآن يستورد من npm (firebase/auth)
 import {
     onAuthStateChanged,
     signOut
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+} from "firebase/auth";
+
+// 🔥 بدل gstatic → الآن يستورد من npm (firebase/firestore)
 import {
     collection,
     addDoc,
@@ -12,12 +16,15 @@ import {
     deleteDoc,
     doc,
     serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+} from "firebase/firestore";
+
+// 🔥 بدل gstatic → الآن يستورد من npm (firebase/storage)
 import {
     ref,
     uploadBytes,
     getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
+} from "firebase/storage";
+
 
 const postsList = document.getElementById("adminPosts");
 const titleInput = document.getElementById("imageTitle");
