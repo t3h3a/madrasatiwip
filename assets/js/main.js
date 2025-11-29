@@ -61,6 +61,54 @@ function buildMobileShell() {
 }
 
 
+// ضبط اللغة مباشرة عند تحميل السكربت بناءً على التفضيل المخزن (قبل أي DOMContentLoaded)
+(function primeDocumentLanguage() {
+    try {
+        const target = "ar"; // لغة افتراضية ثابتة
+        document.documentElement.lang = target;
+        document.documentElement.dir = target === "en" ? "ltr" : "rtl";
+        document.body?.setAttribute("data-lang", target);
+        localStorage.setItem("appLanguage", target);
+    } catch (_) {
+        // تجاهل أي أخطاء في الوصول إلى التخزين المحلي
+    }
+})();
+
+// خريطة عكسية للنصوص العربية لتسهيل ربط data-i18n تلقائياً
+function buildArValueMap() {
+    const map = new Map();
+    Object.entries(translations.ar || {}).forEach(([key, value]) => {
+        const text = (value || "").trim();
+        if (!text) return;
+        if (!map.has(text)) {
+            map.set(text, key);
+        }
+    });
+    return map;
+}
+
+// محاولة ربط عناصر بلا data-i18n بالمفاتيح بناءً على النص العربي المطابق
+function autoBindTranslationKeys() {
+    if (document.body?.dataset.autoBound === "true") return;
+    const arMap = buildArValueMap();
+    if (!arMap.size) return;
+
+    const candidates = Array.from(document.querySelectorAll("body *"))
+        .filter(el => !el.dataset.i18n && el.childElementCount === 0);
+
+    candidates.forEach(el => {
+        const text = (el.textContent || "").trim();
+        if (!text || text.length > 200) return;
+        const key = arMap.get(text);
+        if (key) {
+            el.dataset.i18n = key;
+        }
+    });
+    if (document.body) {
+        document.body.dataset.autoBound = "true";
+    }
+}
+
 const translations = {
     ar: {
         "nav.home": "الرئيسية",
@@ -116,7 +164,7 @@ const translations = {
         "videos.card1.title": "🔶 فيديو تعريفي عن تخصص الضيافة",
         "videos.card1.desc": "شرح بسيط عن المسار، وين بيشتغل الطالب، ومحتوى الدروس العملية والنظرية.",
         "videos.card2.title": "💻 رأي طالب IT في نظام BTEC",
-        "videos.card2.desc": "طالب IT يشرح تجربته مع نظام BTEC وكيف ساعده يطوّر مهاراته.",
+        "videos.card2.desc": "طالب IT يشرح تجربته ومشروعه وكيف ساعده النظام يطوّر مهاراته.",
         "videos.card3.title": "🚀 مشاريع طلاب BTEC",
         "videos.card3.desc": "عرض سريع لأفضل مشاريع نظام BTEC في المدرسة.",
         "settings.title": "الإعدادات",
@@ -198,7 +246,7 @@ const translations = {
         "videos.subtitle": "Clips that help you understand the BTEC system from students and teachers.",
         "videos.card1.title": "🔶 Intro to Hospitality",
         "videos.card1.desc": "A short overview of the track, workplaces, and course content.",
-        "videos.card2.title": "💻 IT student talks BTEC",
+        "videos.card2.title": "💻 An IT student talks BTEC",
         "videos.card2.desc": "How one IT student used projects to grow his skills.",
         "videos.card3.title": "🚀 BTEC student projects",
         "videos.card3.desc": "A quick tour of standout BTEC projects at school.",
@@ -280,16 +328,13 @@ function applyColorScheme(schemeKey) {
     });
 }
 
-function applyLanguage() {
-    const targetLang = "ar"; // تثبيت الواجهة على العربية فقط
+function applyLanguage(lang) {
+    const targetLang = "ar"; // إجبار الواجهة على العربية
     document.documentElement.lang = targetLang;
-    document.documentElement.dir = "rtl";
+    document.documentElement.dir = targetLang === "en" ? "ltr" : "rtl";
     document.body.setAttribute("data-lang", targetLang);
     localStorage.setItem("appLanguage", targetLang);
-
-    // تنظيف أي ترجمة أو كوكيز سابقة
-    clearTranslateCookie();
-    removeGoogleTranslateArtifacts();
+    clearGoogleTranslateArtifacts();
 
     document.querySelectorAll("[data-i18n], [data-i18n-placeholder], [data-i18n-label], [data-i18n-title]").forEach(el => {
         const key = el.dataset.i18n;
@@ -313,67 +358,21 @@ function applyLanguage() {
         }
     });
 
-    // لا يوجد أزرار لغة بعد الآن
-}
-
-// تطبيق اللغة العربية مباشرة
-applyLanguage();
-
-/* ===================== Google Translate (ar/en) ===================== */
-let googleScriptRequested = false;
-let googleInitialized = false;
-
-function setTranslateCookie(lang) {
-    const domain = window.location.hostname;
-    const base = `googtrans=/ar/${lang}`;
-    document.cookie = `${base};path=/;`;
-    if (domain && domain !== "localhost") {
-        document.cookie = `${base};domain=${domain};path=/;`;
-    }
-}
-
-function applyGoogleTranslate(lang) {
-    // إبقاء هذه الدالة فارغة للاحتياط (لا نحمّل ترجمة جوجل تلقائياً)
-}
-
-function clearTranslateCookie() {
-    const domain = window.location.hostname;
-    const expired = "Thu, 01 Jan 1970 00:00:00 GMT";
-    document.cookie = `googtrans=;expires=${expired};path=/;`;
-    if (domain && domain !== "localhost") {
-        document.cookie = `googtrans=;expires=${expired};domain=${domain};path=/;`;
-    }
-}
-
-function removeGoogleTranslateArtifacts() {
-    document.querySelectorAll(".goog-te-banner-frame, .goog-te-gadget, .skiptranslate").forEach(el => {
-        el.style.display = "none";
+    document.querySelectorAll(".language-switch button").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.lang === targetLang);
     });
-    document.body.style.top = "0px";
 }
 
-function loadGoogleTranslate() {
-    if (googleInitialized || googleScriptRequested) return;
-    googleScriptRequested = true;
-    const script = document.createElement("script");
-    script.src = "https://translate.google.com/translate_a/element.js?cb=__googleTranslateInit";
-    script.async = true;
-    document.head.appendChild(script);
-
-    window.__googleTranslateInit = function () {
-        googleInitialized = true;
-        if (!document.getElementById("google_translate_element")) {
-            const holder = document.createElement("div");
-            holder.id = "google_translate_element";
-            holder.style.display = "none";
-            document.body.appendChild(holder);
-        }
-        new google.translate.TranslateElement({
-            pageLanguage: "ar",
-            includedLanguages: "ar,en",
-            autoDisplay: false
-        }, "google_translate_element");
-    };
+// تنظيف أي آثار لترجمة جوجل السابقة (كوكيز / عناصر DOM)
+function clearGoogleTranslateArtifacts() {
+    const domain = window.location.hostname;
+    const expire = "expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;";
+    document.cookie = `googtrans=;${expire}`;
+    if (domain && domain !== "localhost") {
+        document.cookie = `googtrans=;${expire}domain=${domain};`;
+    }
+    const googleNodes = document.querySelectorAll(".goog-te-banner-frame, .goog-te-gadget, .skiptranslate, #google_translate_element, script[src*='translate_a/element']");
+    googleNodes.forEach(el => el.remove());
 }
 
 function initSettingsPage() {
@@ -392,19 +391,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // التحكم في حجم الخط (صغير / عادي / كبير / كبير جداً) مع حفظ الإعداد
     const fontSizes = ["small", "medium", "large", "xlarge"];
     const storedFont = localStorage.getItem("fontSizePreference") || "medium";
-    const storedLang = "ar";
+    const storedLang = "ar"; // فرض العربية دائماً
     const storedScheme = localStorage.getItem("colorSchemePreference") || "classic";
 
-    applyLanguage();
+    autoBindTranslationKeys();
+    applyLanguage(storedLang);
     applyColorScheme(storedScheme);
-
-    // حاوية مخفية لترجمة جوجل إن لم تكن موجودة
-    if (!document.getElementById("google_translate_element")) {
-        const holder = document.createElement("div");
-        holder.id = "google_translate_element";
-        holder.style.display = "none";
-        document.body.appendChild(holder);
+    // لو اللغة المختارة إنجليزي، أعد تأكيد وجود ترجمة جوجل لتغطية النصوص التي لا تملك data-i18n
+    if (storedLang === "en") {
+        ensureGoogleTranslate();
     }
+
+    // إزالة أي بقايا لترجمة جوجل عند تحميل الصفحة
+    clearGoogleTranslateArtifacts();
 
     function setFontSize(size) {
         if (!fontSizes.includes(size)) return;
@@ -464,13 +463,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })();
 
     initSettingsPage();
-    // إزالة شريط ترجمة جوجل إذا ظهر
-    setTimeout(() => {
-        document.querySelectorAll(".goog-te-banner-frame, .goog-te-gadget, .skiptranslate").forEach(el => {
-            el.style.display = "none";
-        });
-        document.body.style.top = "0px";
-    }, 500);
     // --- تمييز الكلمات (BTEC / بتيك) و (Pearson / بيرسون) ---
     function highlightKeywords(root = document.body) {
         const patterns = [

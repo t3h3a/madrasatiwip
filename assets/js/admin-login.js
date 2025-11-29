@@ -1,33 +1,8 @@
-import { auth, ADMIN_EMAIL, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "./firebase-config.js";
+import { auth, ADMIN_EMAIL, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "./firebase-config.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
 const FALLBACK_EMAIL = "btecmaad@gmail.com";
 const FALLBACK_PASS = "123456789102008";
-
-// تخزين آمن يعمل حتى لو كان localStorage غير متاح (بعض متصفحات الهاتف تمنعه)
-const memoryStore = {};
-const safeStorage = {
-    get(key) {
-        try {
-            return localStorage.getItem(key);
-        } catch {
-            return memoryStore[key] || null;
-        }
-    },
-    set(key, value) {
-        try {
-            localStorage.setItem(key, value);
-        } catch {
-            memoryStore[key] = value;
-        }
-    },
-    remove(key) {
-        try {
-            localStorage.removeItem(key);
-        } catch {
-            delete memoryStore[key];
-        }
-    }
-};
 
 function setStatus(message, isError = false) {
     const statusEl = document.getElementById("adminLoginStatus");
@@ -61,7 +36,7 @@ async function loginAdmin(email, password) {
             }
         }
         if (email.toLowerCase() === FALLBACK_EMAIL.toLowerCase() && password === FALLBACK_PASS) {
-            safeStorage.set("fakeAdmin", "true");
+            localStorage.setItem("fakeAdmin", "true");
             window.location.href = "admin-panel.html";
             return;
         }

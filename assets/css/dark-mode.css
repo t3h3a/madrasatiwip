@@ -324,6 +324,72 @@ input, textarea, select {
     background: var(--bg-primary) !important;
 }
 
+/* وضع داكن لصفحة الإعدادات */
+[data-theme="dark"] .settings-shell {
+    background: linear-gradient(180deg, #0b1220, #0f172a) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .settings-hero {
+    background: #0f172a !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: 0 14px 32px rgba(0,0,0,0.45) !important;
+}
+
+[data-theme="dark"] .settings-hero h1,
+[data-theme="dark"] .settings-hero .lead {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .settings-card {
+    background: #0f172a !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 12px 26px rgba(0,0,0,0.4) !important;
+}
+
+[data-theme="dark"] .settings-card p,
+[data-theme="dark"] .settings-card small,
+[data-theme="dark"] .settings-card label,
+[data-theme="dark"] .settings-card .profile-status {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .settings-card h2,
+[data-theme="dark"] .settings-card .card-head h2 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .settings-card .tag {
+    background: var(--accent-soft, rgba(37,99,235,0.16)) !important;
+    color: var(--accent-primary, #2563eb) !important;
+}
+
+[data-theme="dark"] .settings-lang button {
+    background: #0b1220 !important;
+    color: var(--text-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .settings-lang button.active {
+    background: var(--accent-primary, #2563eb) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+}
+
+[data-theme="dark"] .palette-card {
+    background: #0b1220 !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .palette-card h4,
+[data-theme="dark"] .palette-card strong,
+[data-theme="dark"] .palette-card span {
+    color: var(--text-primary) !important;
+}
+
 /* تعديل صفحة المساعد الذكي */
 [data-theme="dark"] .ai-bg {
     opacity: 0.8;
@@ -331,53 +397,6 @@ input, textarea, select {
 
 [data-theme="dark"] .ai-chat-container {
     background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(15,23,42,0.95)) !important;
-}
-
-/* وضع داكن لصفحة الإعدادات */
-[data-theme="dark"] .settings-shell {
-    background: linear-gradient(180deg, var(--bg-primary, #000000), var(--bg-tertiary, #111827)) !important;
-    color: var(--text-primary, #ffffff) !important;
-}
-
-[data-theme="dark"] .settings-hero,
-[data-theme="dark"] .settings-card {
-    background: var(--bg-secondary, #0d1117) !important;
-    border-color: var(--border-color, rgba(255,255,255,0.12)) !important;
-    box-shadow: 0 14px 32px rgba(0,0,0,0.4) !important;
-    color: var(--text-primary, #ffffff) !important;
-}
-
-[data-theme="dark"] .settings-hero .lead,
-[data-theme="dark"] .muted,
-[data-theme="dark"] .settings-card .muted {
-    color: var(--text-secondary, #cbd5e1) !important;
-}
-
-[data-theme="dark"] .settings-hero .eyebrow,
-[data-theme="dark"] .settings-card .eyebrow,
-[data-theme="dark"] .settings-card .tag {
-    color: var(--text-muted, #cbd5e1) !important;
-}
-
-[data-theme="dark"] .settings-card .tag {
-    background: var(--accent-soft, rgba(37,99,235,0.18)) !important;
-}
-
-[data-theme="dark"] .palette-card {
-    background: var(--bg-tertiary, #111827) !important;
-    border-color: var(--border-color, rgba(255,255,255,0.15)) !important;
-    color: var(--text-primary, #ffffff) !important;
-}
-
-[data-theme="dark"] .language-switch button {
-    background: var(--bg-tertiary, #111827) !important;
-    color: var(--text-primary, #ffffff) !important;
-    border-color: var(--border-color, rgba(255,255,255,0.15)) !important;
-}
-
-[data-theme="dark"] .language-switch button.active {
-    background: var(--accent-primary, #2563eb) !important;
-    color: #fff !important;
 }
 /* (keyword classes moved to style.css for global scope) */
 

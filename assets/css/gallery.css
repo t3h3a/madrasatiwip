@@ -55,10 +55,9 @@ body {
 ================================ */
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 320px));
     gap: 28px;
-    justify-content: center;
-    justify-items: center;
+    justify-content: start;
 }
 
 .gallery-groups {
@@ -107,8 +106,6 @@ body {
     display: flex;
     flex-direction: column;
     border: 1px solid #e2e8f0;
-    width: 100%;
-    max-width: 420px;
 }
 
 .gallery-card:hover {

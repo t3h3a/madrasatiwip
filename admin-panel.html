@@ -3,158 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة الأدمن - معرض الإنجازات</title>
+    <title>لوحة تحكم المعرض</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/admin.css">
 </head>
-<body data-page="admin-panel">
-
-<main class="admin-shell">
-    <div id="adminStatus" class="status" style="max-width: 1200px; margin: 12px auto; text-align: center;"></div>
-
-    <div class="admin-card admin-card--panel" id="adminPanelCard" style="display:none;">
+<body class="admin-shell">
+    <section id="adminLoginCard" class="admin-card">
         <div class="admin-header">
             <div>
-                <p class="eyebrow">لوحة التحكم</p>
-                <h1>إدارة المحتوى</h1>
+                <p class="eyebrow">دخول الأدمن</p>
+                <h1>تسجيل الدخول</h1>
+                <p>الدخول للبريد المصرّح فقط.</p>
             </div>
+        </div>
+        <form id="adminLoginForm" class="admin-form" autocomplete="off">
+            <label>
+                <span>البريد الإلكتروني</span>
+                <input type="email" id="adminEmail" required placeholder="btecmaad@gmail.com" autocomplete="off">
+            </label>
+            <label>
+                <span>كلمة المرور</span>
+                <input type="password" id="adminPassword" required placeholder="••••••••" autocomplete="new-password">
+            </label>
             <div class="admin-actions">
-                <button id="adminLogout" class="danger">تسجيل الخروج</button>
+                <button type="submit"><i class="fa-solid fa-door-open"></i> تسجيل الدخول</button>
+                <div id="adminStatus" class="status"></div>
             </div>
+        </form>
+    </section>
+
+    <section id="adminPanelCard" class="admin-card admin-card--panel" style="display:none;">
+        <div class="admin-header">
+            <div>
+                <p class="eyebrow">لوحة تحكم المعرض</p>
+                <h1>نشر وحذف منشورات المعرض</h1>
+                <p>يُسمح فقط للبريد المصرّح به، سيتم الخروج تلقائياً لغير الأدمن.</p>
+            </div>
+            <button id="adminLogout" class="danger"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</button>
         </div>
 
         <div class="admin-tabs">
-            <button class="tab-btn active" data-admin-tab="galleryTab">
-                <i class="fa-solid fa-images"></i>
-                إدارة المعرض
-            </button>
-            <button class="tab-btn" data-admin-tab="videosTab">
-                <i class="fa-solid fa-video"></i>
-                إدارة الفيديوهات
-            </button>
+            <button id="adminTabGallery" class="active"><i class="fa-solid fa-layer-group"></i> إدارة المعرض</button>
+            <button id="adminTabVideos"><i class="fa-solid fa-circle-play"></i> إدارة الفيديوهات</button>
         </div>
 
-        <section id="galleryTab" class="tab-panel active">
+        <div id="gallerySection" class="panel-section">
             <div class="admin-grid">
-                <div class="card-block">
+                <div class="admin-form card-block">
                     <div class="block-title">
-                        <h2>رفع منشور جديد</h2>
-                        <p>أضف مجموعة صور مع عنوان ووصف.</p>
+                        <h2><i class="fa-solid fa-pen-to-square"></i> إنشاء منشور جديد</h2>
+                        <p>كل الصور التي تختارها هنا تنزل في منشور واحد مع أوصافها ضمن معرض مستقل.</p>
                     </div>
-                    <div class="admin-form">
-                        <label>
-                            عنوان مجموعة المنشور
-                            <input id="postGroupTitle" type="text" placeholder="عنوان المعرض (اختياري)">
-                        </label>
-                        <label>
-                            مقدمة المجموعة
-                            <textarea id="postGroupIntro" rows="2" placeholder="وصف يظهر قبل الصور (اختياري)"></textarea>
-                        </label>
-                        <label>
-                            عنوان المنشور
-                            <input id="postTitle" type="text" placeholder="عنوان لكل الصور">
-                        </label>
-                        <label>
-                            الصور
-                            <input id="postImage" type="file" accept="image/*" multiple>
-                        </label>
-                        <div id="selectedImages" class="image-list"></div>
-                        <div class="admin-actions">
-                            <button type="button" id="addPostBtn">نشر الصور</button>
-                        </div>
+                    <label>
+                        <span>عنوان المعرض / الموضوع</span>
+                        <input type="text" id="postGroupTitle" placeholder="مثال: تكريم RoboChamps">
+                    </label>
+                    <label>
+                        <span>وصف قصير للمعرض</span>
+                        <textarea id="postGroupIntro" rows="2" placeholder="اكتب وصفاً قصيراً للمعرض"></textarea>
+                    </label>
+                    <label>
+                        <span>عنوان رئيسي للمعرض (يظهر في الصفحة)</span>
+                        <input type="text" id="galleryHeading" placeholder="معرض الإنجازات">
+                    </label>
+                    <label>
+                        <span>وصف رئيسي تحت العنوان</span>
+                        <textarea id="galleryIntro" rows="3" placeholder="اكتب الوصف الذي تريده للمعرض"></textarea>
+                    </label>
+                    <button type="button" id="saveHeroBtn"><i class="fa-solid fa-floppy-disk"></i> حفظ العنوان/الوصف</button>
+                    <hr>
+                    <label>
+                        <span>عنوان المنشور</span>
+                        <input type="text" id="postTitle" placeholder="مثال: تكريم فريق RoboChamps">
+                    </label>
+                    <label>
+                        <span>الصور (اختيار أكثر من صورة يعني منشور واحد يحتويها كلها)</span>
+                        <input type="file" id="postImage" accept="image/*" multiple>
+                    </label>
+                    <div id="selectedImages" class="image-list"></div>
+                    <div class="admin-actions">
+                        <button type="button" id="addPostBtn"><i class="fa-solid fa-cloud-arrow-up"></i> إضافة منشور</button>
+                        <div id="adminStatus" class="status"></div>
                     </div>
+                </div>
+
+                <div class="card-block posts-wrap">
+                    <div class="block-title">
+                        <h2><i class="fa-solid fa-layer-group"></i> المنشورات الحالية</h2>
+                        <p>لكل منشور زر تعديل/حذف يظهر للأدمن فقط.</p>
+                    </div>
+                    <div class="posts-list" id="adminPosts"></div>
                 </div>
             </div>
 
             <div class="card-block">
                 <div class="block-title">
-                    <h2>نشر سريع بعدة بطاقات</h2>
-                    <p>املأ البطاقات التالية ثم اضغط نشر دفعة واحدة.</p>
+                    <h2><i class="fa-solid fa-clone"></i> ١١ بطاقة جاهزة (مثل بطاقات الروبوت)</h2>
+                    <p>كل بطاقة ثابتة بنفس المقاس: صورة + عنوان + وصف. عند الحفظ تُنشر كبطاقات جديدة في المعرض.</p>
                 </div>
                 <div class="dual-inputs">
                     <label>
-                        عنوان المجموعة
-                        <input id="slotGroupTitle" type="text" placeholder="عنوان المعرض">
+                        <span>عنوان المعرض/الموضوع الجديد</span>
+                        <input type="text" id="slotGroupTitle" placeholder="مثال: إنجازات RoboChamps">
                     </label>
                     <label>
-                        وصف المجموعة
-                        <input id="slotGroupIntro" type="text" placeholder="مقدمة قصيرة">
+                        <span>وصف قصير للمعرض</span>
+                        <input type="text" id="slotGroupIntro" placeholder="شرح أو وصف لهذا المعرض">
                     </label>
                 </div>
-                <div id="slotGrid" class="slot-grid"></div>
-                <div class="admin-actions">
-                    <button type="button" id="saveSlotsBtn">نشر البطاقات</button>
+                <div class="slot-grid" id="slotGrid">
+                    <!-- يتم توليد الحقول من السكربت -->
                 </div>
-                <div id="slotsStatus" class="status"></div>
+                <div class="admin-actions">
+                    <button type="button" id="saveSlotsBtn"><i class="fa-solid fa-floppy-disk"></i> نشر البطاقات</button>
+                    <div id="slotsStatus" class="status"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="videosSection" class="panel-section" style="display:none;">
+            <div class="card-block admin-form video-form">
+                <div class="block-title">
+                    <h2><i class="fa-solid fa-circle-plus"></i> إضافة فيديو توعوي</h2>
+                    <p>يمكنك لصق رابط MP4/YouTube جاهز أو رفع ملف فيديو، مع صورة مصغرة اختيارية.</p>
+                </div>
+                <label>
+                    <span>عنوان الفيديو</span>
+                    <input type="text" id="videoTitle" placeholder="مثال: لماذا تختار BTEC؟">
+                </label>
+                <label>
+                    <span>وصف قصير</span>
+                    <textarea id="videoDesc" rows="2" placeholder="اكتب وصفاً مختصراً يظهر أسفل العنوان"></textarea>
+                </label>
+                <div class="dual-inputs">
+                    <label>
+                        <span>رابط فيديو جاهز (MP4 أو YouTube)</span>
+                        <input type="text" id="videoUrl" placeholder="https://... أو رابط يوتيوب">
+                    </label>
+                    <label>
+                        <span>أو رفع ملف فيديو</span>
+                        <input type="file" id="videoFile" accept="video/*">
+                    </label>
+                </div>
+                <label>
+                    <span>صورة مصغرة (اختياري)</span>
+                    <input type="file" id="videoThumb" accept="image/*">
+                </label>
+                <div class="admin-actions">
+                    <button type="button" id="addVideoBtn"><i class="fa-solid fa-cloud-arrow-up"></i> نشر الفيديو</button>
+                    <div id="videoStatus" class="status"></div>
+                </div>
             </div>
 
             <div class="card-block">
                 <div class="block-title">
-                    <h2>المنشورات الحالية</h2>
-                    <p>يمكنك التعديل أو الحذف مباشرة.</p>
+                    <h2><i class="fa-solid fa-list"></i> الفيديوهات الحالية</h2>
+                    <p>تعديل/حذف يظهر للأدمن فقط.</p>
                 </div>
-                <div class="posts-wrap" id="adminPosts"></div>
+                <div class="posts-list" id="adminVideos"></div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="videosTab" class="tab-panel">
-            <div class="admin-grid admin-grid--tabs">
-                <div class="card-block">
-                    <div class="block-title">
-                        <h2>إضافة فيديو جديد</h2>
-                        <p>ارفع ملف فيديو أو أضف رابط خارجي مع صورة مصغرة.</p>
-                    </div>
-                    <div class="admin-form">
-                        <label>
-                            عنوان الفيديو
-                            <input id="videoTitle" type="text" placeholder="عنوان واضح">
-                        </label>
-                        <label>
-                            وصف الفيديو
-                            <textarea id="videoDescription" rows="2" placeholder="نبذة مختصرة (اختياري)"></textarea>
-                        </label>
-                        <div class="dual-inputs">
-                            <label>
-                                رابط الفيديو
-                                <input id="videoUrl" type="url" placeholder="https://example.com/video.mp4 أو رابط YouTube">
-                            </label>
-                            <label>
-                                حالة النشر
-                                <select id="videoPublish">
-                                    <option value="published">منشور</option>
-                                    <option value="draft">مسودة</option>
-                                </select>
-                            </label>
-                        </div>
-                        <label>
-                            رفع ملف فيديو
-                            <input id="videoFile" type="file" accept="video/*">
-                        </label>
-                        <label>
-                            صورة مصغرة (اختياري)
-                            <input id="videoThumb" type="file" accept="image/*">
-                        </label>
-                        <div class="admin-actions">
-                            <button type="button" id="saveVideoBtn">حفظ الفيديو</button>
-                        </div>
-                        <div id="videoStatus" class="status"></div>
-                    </div>
-                </div>
-                <div class="card-block">
-                    <div class="block-title">
-                        <h2>الفيديوهات الحالية</h2>
-                        <p>تحكم سريع بالتعديل أو الحذف.</p>
-                    </div>
-                    <div class="posts-wrap videos-admin-list" id="adminVideos"></div>
-                </div>
-            </div>
-        </section>
-    </div>
-</main>
-
-<script src="assets/js/admin.bundle.js"></script>
+    <script type="module" src="assets/js/admin.js"></script>
 </body>
 </html>

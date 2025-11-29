@@ -1,95 +1,76 @@
-import { db } from "./firebase-config.js";
-import {
-    collection,
-    query,
-    orderBy,
-    onSnapshot
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { db, collection, query, orderBy, onSnapshot } from "./firebase-config.js";
 
-const grid = document.querySelector(".videos-grid");
+const listEl = document.getElementById("videosList");
 const statusEl = document.getElementById("videosStatus");
-const VIDEO_EXT = /\.(mp4|webm|ogg)$/i;
-
-function isFileVideo(url) {
-    return VIDEO_EXT.test(url || "");
-}
 
 function setStatus(text) {
     if (statusEl) statusEl.textContent = text || "";
 }
 
-function buildThumb(data) {
-    const wrapper = document.createElement("div");
-    wrapper.className = "video-thumb";
+function createCard(data) {
+    const card = document.createElement("div");
+    card.className = "video-card";
+    card.dataset.video = data.videoUrl || "";
 
-    if (data.thumbnailUrl) {
+    const thumb = document.createElement("div");
+    thumb.className = "video-thumb";
+
+    if (data.thumbnail) {
         const img = document.createElement("img");
-        img.src = data.thumbnailUrl;
-        img.alt = data.title || "صورة الفيديو";
-        wrapper.appendChild(img);
-        return wrapper;
-    }
-
-    if (isFileVideo(data.videoUrl)) {
+        img.src = data.thumbnail;
+        img.alt = data.title || "";
+        thumb.appendChild(img);
+    } else if (data.videoUrl) {
         const vid = document.createElement("video");
         vid.src = data.videoUrl;
         vid.muted = true;
         vid.loop = true;
-        vid.autoplay = true;
         vid.playsInline = true;
-        wrapper.appendChild(vid);
-        return wrapper;
+        vid.autoplay = true;
+        thumb.appendChild(vid);
     }
 
-    wrapper.classList.add("video-thumb-placeholder");
-    wrapper.innerHTML = `<span>بدون صورة</span>`;
-    return wrapper;
-}
+    const body = document.createElement("div");
+    const h3 = document.createElement("h3");
+    h3.textContent = data.title || "فيديو توعوي";
+    body.appendChild(h3);
 
-function buildCard(data, id) {
-    const card = document.createElement("div");
-    card.className = "video-card";
-    card.dataset.videoSrc = data.videoUrl || "";
-    card.dataset.videoType = isFileVideo(data.videoUrl) ? "file" : "embed";
-    card.dataset.title = data.title || "";
-    card.dataset.description = data.description || "";
-    card.dataset.id = id;
-
-    const thumb = buildThumb(data);
-    const info = document.createElement("div");
-    info.innerHTML = `
-        <h3>${data.title || "فيديو بدون عنوان"}</h3>
-        ${data.description ? `<p>${data.description}</p>` : ""}
-    `;
+    if (data.description) {
+        const p = document.createElement("p");
+        p.textContent = data.description;
+        body.appendChild(p);
+    }
 
     card.appendChild(thumb);
-    card.appendChild(info);
+    card.appendChild(body);
     return card;
 }
 
 function renderVideos(snapshot) {
-    if (!grid) return;
-    grid.innerHTML = "";
-    let hasVideos = false;
-
+    if (!listEl) return;
+    listEl.innerHTML = "";
+    if (snapshot.empty) {
+        setStatus("لا توجد فيديوهات حالياً.");
+        return;
+    }
+    setStatus("");
     snapshot.forEach(docSnap => {
         const data = docSnap.data();
-        if (data.published === false) return;
-        hasVideos = true;
-        grid.appendChild(buildCard(data, docSnap.id));
+        const card = createCard({
+            title: data.title,
+            description: data.description,
+            videoUrl: data.videoUrl,
+            thumbnail: data.thumbnail
+        });
+        listEl.appendChild(card);
     });
-
-    if (!hasVideos) {
-        setStatus("لا توجد فيديوهات منشورة حالياً.");
-    } else {
-        setStatus("");
+    if (window.setupVideoCards) {
+        window.setupVideoCards();
     }
-
-    document.dispatchEvent(new CustomEvent("videos:rendered"));
 }
 
 function startVideosFeed() {
-    if (!grid) return;
+    if (!listEl) return;
     setStatus("...جاري تحميل الفيديوهات");
     const q = query(collection(db, "videos"), orderBy("createdAt", "desc"));
     onSnapshot(q, renderVideos, (err) => {

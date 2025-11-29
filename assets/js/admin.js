@@ -16,7 +16,12 @@ import {
     onSnapshot,
     updateDoc,
     setDoc,
-    getDoc
+    getDoc,
+    storage,
+    ref,
+    uploadBytes,
+    getDownloadURL,
+    uploadBytesResumable
 } from "./firebase-config.js";
 
 const loginForm = document.getElementById("adminLoginForm");
@@ -41,49 +46,24 @@ const saveSlotsBtn = document.getElementById("saveSlotsBtn");
 const slotsStatus = document.getElementById("slotsStatus");
 const slotGroupTitleInput = document.getElementById("slotGroupTitle");
 const slotGroupIntroInput = document.getElementById("slotGroupIntro");
-const tabButtons = document.querySelectorAll("[data-admin-tab]");
-const tabPanels = document.querySelectorAll(".tab-panel");
+const tabGalleryBtn = document.getElementById("adminTabGallery");
+const tabVideosBtn = document.getElementById("adminTabVideos");
+const gallerySection = document.getElementById("gallerySection");
+const videosSection = document.getElementById("videosSection");
 const videoTitleInput = document.getElementById("videoTitle");
-const videoDescriptionInput = document.getElementById("videoDescription");
+const videoDescInput = document.getElementById("videoDesc");
 const videoUrlInput = document.getElementById("videoUrl");
 const videoFileInput = document.getElementById("videoFile");
 const videoThumbInput = document.getElementById("videoThumb");
-const videoPublishSelect = document.getElementById("videoPublish");
-const saveVideoBtn = document.getElementById("saveVideoBtn");
-const videoStatusEl = document.getElementById("videoStatus");
-const adminVideosWrap = document.getElementById("adminVideos");
+const addVideoBtn = document.getElementById("addVideoBtn");
+const videoStatus = document.getElementById("videoStatus");
+const adminVideosList = document.getElementById("adminVideos");
 const SLOT_COUNT = 11;
 let slotState = Array.from({ length: SLOT_COUNT }, () => ({ image: "", title: "", caption: "" }));
-let unsubscribeGallery = null;
-let unsubscribeVideos = null;
 const FALLBACK_EMAIL = "btecmaad@gmail.com";
 const FALLBACK_PASS = "123456789102008";
-
-// تخزين آمن يعمل حتى لو كان localStorage غير متاح (مثل وضع التصفح الخاص في بعض المتصفحات)
-const memoryStore = {};
-const safeStorage = {
-    get(key) {
-        try {
-            return localStorage.getItem(key);
-        } catch {
-            return memoryStore[key] || null;
-        }
-    },
-    set(key, value) {
-        try {
-            localStorage.setItem(key, value);
-        } catch {
-            memoryStore[key] = value;
-        }
-    },
-    remove(key) {
-        try {
-            localStorage.removeItem(key);
-        } catch {
-            delete memoryStore[key];
-        }
-    }
-};
+let unsubscribeVideos = null;
+let isUploadingVideo = false;
 
 function clearLoginInputs() {
     if (emailInput) emailInput.value = "";
@@ -97,6 +77,22 @@ const CLOUDINARY_FOLDER = "app_gallery";
 const CLOUDINARY_VIDEO_URL = "https://api.cloudinary.com/v1_1/dzrwjhqzu/video/upload";
 const CLOUDINARY_VIDEO_PRESET = "app_videos";
 const CLOUDINARY_VIDEO_FOLDER = "app_videos";
+
+async function uploadToStorageFile(file, folder = "uploads", onProgress = null) {
+    const storageRef = ref(storage, `${folder}/${Date.now()}-${file.name}`);
+    const task = uploadBytesResumable(storageRef, file);
+    return new Promise((resolve, reject) => {
+        task.on("state_changed", (snap) => {
+            if (onProgress) {
+                const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+                onProgress(Math.min(100, Math.max(0, pct)));
+            }
+        }, reject, async () => {
+            const url = await getDownloadURL(task.snapshot.ref);
+            resolve(url);
+        });
+    });
+}
 
 function setStatus(text, isError = false) {
     if (!statusEl) return;
@@ -113,10 +109,45 @@ function setSlotsStatus(text, isError = false) {
 }
 
 function setVideoStatus(text, isError = false) {
-    if (!videoStatusEl) return;
-    videoStatusEl.textContent = text || "";
-    videoStatusEl.className = isError ? "status error" : "status";
-    if (text) videoStatusEl.classList.add("show");
+    if (!videoStatus) return;
+    videoStatus.textContent = text || "";
+    videoStatus.className = isError ? "status error" : "status";
+    if (text) videoStatus.classList.add("show");
+}
+
+function setVideoLoading(state) {
+    isUploadingVideo = state;
+    if (addVideoBtn) addVideoBtn.disabled = state;
+    if (addVideoBtn) addVideoBtn.classList.toggle("is-loading", state);
+}
+
+function uploadVideoToCloudinary(file, onProgress = null) {
+    return new Promise((resolve, reject) => {
+        const form = new FormData();
+        form.append("file", file);
+        form.append("upload_preset", CLOUDINARY_VIDEO_PRESET);
+        form.append("folder", CLOUDINARY_VIDEO_FOLDER);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", CLOUDINARY_VIDEO_URL);
+        xhr.upload.onprogress = (e) => {
+            if (onProgress && e.lengthComputable) {
+                const pct = Math.round((e.loaded / e.total) * 100);
+                onProgress(pct);
+            }
+        };
+        xhr.onerror = () => reject(new Error("upload-error"));
+        xhr.onload = () => {
+            try {
+                const json = JSON.parse(xhr.responseText || "{}");
+                if (!json.secure_url) return reject(new Error("no-url"));
+                resolve(json.secure_url);
+            } catch (err) {
+                reject(err);
+            }
+        };
+        xhr.send(form);
+    });
 }
 
 async function adminLogin(e) {
@@ -149,7 +180,7 @@ async function adminLogin(e) {
         }
         // fallback محلي إذا فشل Firebase والبيانات مطابقة
         if (email.toLowerCase() === FALLBACK_EMAIL.toLowerCase() && pass === FALLBACK_PASS) {
-            safeStorage.set("fakeAdmin", "true");
+            localStorage.setItem("fakeAdmin", "true");
             togglePanel(true);
             setStatus("");
             return;
@@ -169,7 +200,7 @@ async function logoutAdmin() {
         console.error(err);
         setStatus("تعذر تسجيل الخروج", true);
     }
-    safeStorage.remove("fakeAdmin");
+    localStorage.removeItem("fakeAdmin");
 }
 
 async function uploadPost() {
@@ -248,17 +279,57 @@ function buildSlotsForm() {
     if (!slotGrid) return;
     slotGrid.innerHTML = "";
     for (let i = 0; i < SLOT_COUNT; i++) {
-        const label = `رفع صورة البطاقة ${i + 1}`;
         const card = document.createElement("div");
         card.className = "slot-card";
         card.innerHTML = `
-            <div class="slot-preview" data-slot-preview="${i}">صورة ${i + 1}</div>
-            <input type="file" accept="image/*" data-slot-file="${i}" aria-label="${label}" title="${label}">
-            <input type="text" placeholder="عنوان البطاقة" data-slot-title="${i}" aria-label="عنوان البطاقة ${i + 1}">
-            <textarea rows="2" placeholder="وصف مختصر" data-slot-caption="${i}" aria-label="وصف البطاقة ${i + 1}"></textarea>
+            <div class="slot-preview" data-slot-preview="${i}">
+                <span class="slot-label">صورة ${i + 1}</span>
+                <img alt="معاينة البطاقة ${i + 1}" />
+            </div>
+            <label>
+                <span>اختيار الملف</span>
+                <input type="file" accept="image/*" data-slot-file="${i}">
+            </label>
+            <label>
+                <span>عنوان البطاقة</span>
+                <input type="text" placeholder="عنوان البطاقة" data-slot-title="${i}">
+            </label>
+            <label>
+                <span>وصف مختصر</span>
+                <textarea rows="2" placeholder="وصف مختصر" data-slot-caption="${i}"></textarea>
+            </label>
         `;
         slotGrid.appendChild(card);
     }
+    attachSlotPreviewHandlers();
+}
+
+function attachSlotPreviewHandlers() {
+    if (!slotGrid) return;
+    slotGrid.querySelectorAll("[data-slot-file]").forEach(input => {
+        input.addEventListener("change", (e) => {
+            const idx = input.dataset.slotFile;
+            const preview = slotGrid.querySelector(`[data-slot-preview="${idx}"]`);
+            const imgEl = preview?.querySelector("img");
+            if (!preview || !imgEl) return;
+
+            const file = e.target.files?.[0];
+            if (!file) {
+                preview.classList.remove("has-image");
+                imgEl.removeAttribute("src");
+                slotState[idx] = { ...(slotState[idx] || {}), image: "" };
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = ev => {
+                const src = ev.target?.result || "";
+                imgEl.src = src;
+                preview.classList.add("has-image");
+                slotState[idx] = { ...(slotState[idx] || {}), image: src };
+            };
+            reader.readAsDataURL(file);
+        });
+    });
 }
 
 function hydrateSlotsForm() {
@@ -267,49 +338,14 @@ function hydrateSlotsForm() {
         const preview = slotGrid.querySelector(`[data-slot-preview="${idx}"]`);
         const title = slotGrid.querySelector(`[data-slot-title="${idx}"]`);
         const caption = slotGrid.querySelector(`[data-slot-caption="${idx}"]`);
-        if (preview && item.image) {
-            preview.style.backgroundImage = `url('${item.image}')`;
-            preview.textContent = "";
+        const imgEl = preview?.querySelector("img");
+        if (preview && imgEl && item.image) {
+            imgEl.src = item.image;
+            preview.classList.add("has-image");
         }
         if (title) title.value = item.title || "";
         if (caption) caption.value = item.caption || "";
     });
-}
-
-// تحديث الحالة والواجهة عند تغيّر أي حقل في بطاقات النشر السريع
-function handleSlotInputChange(e) {
-    if (!slotGrid) return;
-    const target = e.target;
-
-    // تغيير صورة البطاقة
-    if (target.matches("[data-slot-file]")) {
-        const idx = Number(target.dataset.slotFile);
-        const file = target.files?.[0];
-        if (file) {
-            const previewUrl = URL.createObjectURL(file);
-            slotState[idx] = { ...slotState[idx], image: previewUrl };
-            const previewEl = slotGrid.querySelector(`[data-slot-preview="${idx}"]`);
-            if (previewEl) {
-                previewEl.style.backgroundImage = `url('${previewUrl}')`;
-                previewEl.textContent = "";
-            }
-        }
-        return;
-    }
-
-    // عنوان البطاقة
-    if (target.matches("[data-slot-title]")) {
-        const idx = Number(target.dataset.slotTitle);
-        slotState[idx] = { ...slotState[idx], title: target.value };
-        return;
-    }
-
-    // وصف البطاقة
-    if (target.matches("[data-slot-caption]")) {
-        const idx = Number(target.dataset.slotCaption);
-        slotState[idx] = { ...slotState[idx], caption: target.value };
-        return;
-    }
 }
 
 async function saveSlots() {
@@ -358,6 +394,164 @@ async function saveSlots() {
     }
 }
 
+async function addVideo() {
+    if (isUploadingVideo) return;
+    const title = videoTitleInput?.value?.trim() || "فيديو بدون عنوان";
+    const desc = videoDescInput?.value?.trim() || "";
+    let videoUrl = videoUrlInput?.value?.trim() || "";
+    const videoFile = videoFileInput?.files?.[0];
+    const thumbFile = videoThumbInput?.files?.[0];
+
+    if (!videoUrl && !videoFile) {
+        setVideoStatus("أضف رابط فيديو أو ارفع ملف فيديو", true);
+        return;
+    }
+
+    setVideoLoading(true);
+    setVideoStatus("...جاري رفع الفيديو");
+    let progressTimer = null;
+    let lastProgress = 0;
+    const clearTimers = () => {
+        if (progressTimer) {
+            clearTimeout(progressTimer);
+            progressTimer = null;
+        }
+    };
+
+    try {
+        if (videoFile) {
+            const sizeMB = (videoFile.size / (1024 * 1024)).toFixed(1);
+            setVideoStatus(`...جاري رفع الفيديو (~${sizeMB} MB)`);
+            progressTimer = setTimeout(() => {
+                if (lastProgress === 0) {
+                    setVideoStatus("...ما زال الرفع جارٍ (قد يتأخر حسب حجم الملف/الإنترنت)");
+                }
+            }, 8000);
+            videoUrl = await uploadVideoToCloudinary(videoFile, (pct) => {
+                lastProgress = pct;
+                setVideoStatus(`...جاري الرفع ${pct}%`);
+            });
+            clearTimers();
+            setVideoStatus("تم الرفع، جاري الحفظ...");
+        }
+        let thumbnail = "";
+        if (thumbFile) {
+            thumbnail = await uploadToStorageFile(thumbFile, "video-thumbs", (pct) => {
+                setVideoStatus(`...رفع الصورة ${pct}%`);
+            });
+        }
+
+        await addDoc(collection(db, "videos"), {
+            title,
+            description: desc,
+            videoUrl,
+            thumbnail,
+            createdAt: Date.now(),
+            createdBy: auth.currentUser?.email || ""
+        });
+
+        if (videoTitleInput) videoTitleInput.value = "";
+        if (videoDescInput) videoDescInput.value = "";
+        if (videoUrlInput) videoUrlInput.value = "";
+        if (videoFileInput) videoFileInput.value = "";
+        if (videoThumbInput) videoThumbInput.value = "";
+        setVideoStatus("تم نشر الفيديو");
+        setVideoLoading(false);
+    } catch (err) {
+        console.error(err);
+        clearTimers();
+        setVideoStatus("تعذر نشر الفيديو", true);
+        setVideoLoading(false);
+    }
+}
+
+async function deleteVideo(id) {
+    try {
+        await deleteDoc(doc(db, "videos", id));
+    } catch (err) {
+        console.error(err);
+        setVideoStatus("تعذر حذف الفيديو", true);
+    }
+}
+
+async function editVideo(id, data) {
+    const newTitle = prompt("تعديل عنوان الفيديو", data.title || "فيديو بدون عنوان");
+    if (newTitle === null) return;
+    const newDesc = prompt("تعديل الوصف", data.description || "");
+    if (newDesc === null) return;
+    const newUrl = prompt("تعديل رابط الفيديو", data.videoUrl || "");
+    if (newUrl === null || !newUrl.trim()) return;
+
+    try {
+        await updateDoc(doc(db, "videos", id), {
+            title: newTitle.trim() || data.title || "فيديو بدون عنوان",
+            description: newDesc.trim(),
+            videoUrl: newUrl.trim()
+        });
+        setVideoStatus("تم تحديث الفيديو");
+    } catch (err) {
+        console.error(err);
+        setVideoStatus("تعذر تعديل الفيديو", true);
+    }
+}
+
+function renderVideos(snapshot) {
+    if (!adminVideosList) return;
+    adminVideosList.innerHTML = "";
+    if (snapshot.empty) {
+        adminVideosList.innerHTML = `<p class="muted">لا يوجد فيديوهات بعد.</p>`;
+        return;
+    }
+
+    snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const createdAt = data.createdAt ? new Date(data.createdAt).toLocaleString() : "";
+        const card = document.createElement("article");
+        card.className = "admin-post";
+        card.innerHTML = `
+            <div class="post-head">
+                <div>
+                    <p class="eyebrow">${createdAt}</p>
+                    <h3>${data.title || "فيديو بدون عنوان"}</h3>
+                    <p class="muted">${data.description || ""}</p>
+                </div>
+                <div class="admin-actions">
+                    <button data-video-edit="${docSnap.id}">تعديل</button>
+                    <button class="danger" data-video-delete="${docSnap.id}">حذف</button>
+                </div>
+            </div>
+            <div class="post-body">
+                <div class="video-preview">
+                    <div class="video-thumb">
+                        ${data.thumbnail ? `<img src="${data.thumbnail}" alt="${data.title || ""}">` : `<i class="fa-solid fa-circle-play" style="font-size:32px; color:#e5e7eb;"></i>`}
+                    </div>
+                    <div class="video-url">${data.videoUrl || ""}</div>
+                </div>
+            </div>
+        `;
+        adminVideosList.appendChild(card);
+    });
+
+    adminVideosList.querySelectorAll("[data-video-delete]").forEach(btn => {
+        btn.addEventListener("click", () => deleteVideo(btn.dataset.videoDelete));
+    });
+
+    adminVideosList.querySelectorAll("[data-video-edit]").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const snap = snapshot.docs.find(d => d.id === btn.dataset.videoEdit);
+            if (snap) editVideo(btn.dataset.videoEdit, snap.data());
+        });
+    });
+}
+
+function subscribeVideos() {
+    const q = query(collection(db, "videos"), orderBy("createdAt", "desc"));
+    return onSnapshot(q, renderVideos, (err) => {
+        console.error(err);
+        setVideoStatus("تعذر جلب الفيديوهات", true);
+    });
+}
+
 async function deletePost(id) {
     try {
         await deleteDoc(doc(db, "gallery", id));
@@ -395,162 +589,6 @@ async function editPost(id, data) {
         console.error(err);
         setStatus("تعذر تعديل المنشور", true);
     }
-}
-
-async function uploadVideoToCloudinary(file) {
-    const form = new FormData();
-    form.append("file", file);
-    form.append("upload_preset", CLOUDINARY_VIDEO_PRESET);
-    form.append("folder", CLOUDINARY_VIDEO_FOLDER);
-    const res = await fetch(CLOUDINARY_VIDEO_URL, { method: "POST", body: form });
-    if (!res.ok) throw new Error("video-upload-failed");
-    const json = await res.json();
-    if (!json.secure_url) throw new Error("no-video-url");
-    return json.secure_url;
-}
-
-function clearVideoForm() {
-    if (videoTitleInput) videoTitleInput.value = "";
-    if (videoDescriptionInput) videoDescriptionInput.value = "";
-    if (videoUrlInput) videoUrlInput.value = "";
-    if (videoFileInput) videoFileInput.value = "";
-    if (videoThumbInput) videoThumbInput.value = "";
-    if (videoPublishSelect) videoPublishSelect.value = "published";
-}
-
-async function saveVideo() {
-    const title = videoTitleInput?.value?.trim() || "";
-    const description = videoDescriptionInput?.value?.trim() || "";
-    const link = videoUrlInput?.value?.trim() || "";
-    const videoFile = videoFileInput?.files?.[0];
-    const thumbFile = videoThumbInput?.files?.[0];
-    const published = (videoPublishSelect?.value || "published") === "published";
-
-    if (!title) {
-        setVideoStatus("أدخل عنوان الفيديو", true);
-        return;
-    }
-    if (!link && !videoFile) {
-        setVideoStatus("أضف رابطاً أو ارفع ملف فيديو", true);
-        return;
-    }
-
-    setVideoStatus("...جاري حفظ الفيديو");
-    try {
-        let finalVideoUrl = link;
-        let source = "link";
-        if (videoFile) {
-            finalVideoUrl = await uploadVideoToCloudinary(videoFile);
-            source = "upload";
-        }
-        let thumbUrl = "";
-        if (thumbFile) {
-            thumbUrl = await uploadToCloudinary(thumbFile);
-        }
-
-        await addDoc(collection(db, "videos"), {
-            title,
-            description,
-            videoUrl: finalVideoUrl,
-            thumbnailUrl: thumbUrl,
-            published,
-            source,
-            createdAt: Date.now(),
-            createdBy: auth.currentUser?.email || ""
-        });
-
-        clearVideoForm();
-        setVideoStatus("تم حفظ الفيديو");
-    } catch (err) {
-        console.error(err);
-        setVideoStatus("تعذر حفظ الفيديو", true);
-    }
-}
-
-async function deleteVideo(id) {
-    if (!confirm("تأكيد حذف هذا الفيديو؟")) return;
-    try {
-        await deleteDoc(doc(db, "videos", id));
-    } catch (err) {
-        console.error(err);
-        setVideoStatus("تعذر حذف الفيديو", true);
-    }
-}
-
-async function editVideo(id, data) {
-    const newTitle = prompt("تعديل عنوان الفيديو", data.title || "فيديو بدون عنوان");
-    if (newTitle === null) return;
-
-    const newDescription = prompt("وصف الفيديو", data.description || "");
-    if (newDescription === null) return;
-
-    const newUrl = prompt("رابط الفيديو (اتركه كما هو للملف المرفوع)", data.videoUrl || "");
-    if (newUrl === null) return;
-
-    const publishInput = prompt("حالة النشر (منشور/مسودة)", data.published === false ? "مسودة" : "منشور");
-    const published = (publishInput?.trim()?.toLowerCase() || "منشور") !== "مسودة";
-
-    try {
-        await updateDoc(doc(db, "videos", id), {
-            title: newTitle.trim() || data.title || "فيديو بدون عنوان",
-            description: newDescription.trim(),
-            videoUrl: newUrl.trim() || data.videoUrl,
-            published
-        });
-        setVideoStatus("تم تحديث الفيديو");
-    } catch (err) {
-        console.error(err);
-        setVideoStatus("تعذر تعديل الفيديو", true);
-    }
-}
-
-function renderAdminVideos(snapshot) {
-    if (!adminVideosWrap) return;
-    adminVideosWrap.innerHTML = "";
-    if (snapshot.empty) {
-        const empty = document.createElement("p");
-        empty.className = "eyebrow";
-        empty.textContent = "لا يوجد فيديوهات بعد.";
-        adminVideosWrap.appendChild(empty);
-        return;
-    }
-
-    snapshot.forEach(docSnap => {
-        const data = docSnap.data();
-        const createdAt = data.createdAt ? new Date(data.createdAt).toLocaleString() : "";
-        const published = data.published !== false;
-        const card = document.createElement("article");
-        card.className = "video-admin-card";
-        card.innerHTML = `
-            <div class="video-admin-head">
-                <div>
-                    <p class="eyebrow">${createdAt}</p>
-                    <h3>${data.title || "فيديو بدون عنوان"}</h3>
-                    <div class="video-admin-meta">
-                        <span class="pill ${published ? "published" : "draft"}">${published ? "منشور" : "مسودة"}</span>
-                        <span class="pill">${data.source === "upload" ? "ملف مرفوع" : "رابط خارجي"}</span>
-                    </div>
-                </div>
-                <div class="admin-actions">
-                    <button data-action="edit-video" data-id="${docSnap.id}">تعديل</button>
-                    <button class="danger" data-action="delete-video" data-id="${docSnap.id}">حذف</button>
-                </div>
-            </div>
-            ${data.description ? `<p>${data.description}</p>` : ""}
-            ${data.videoUrl ? `<p class="eyebrow" style="word-break: break-all;">${data.videoUrl}</p>` : ""}
-        `;
-        adminVideosWrap.appendChild(card);
-    });
-
-    adminVideosWrap.querySelectorAll("button[data-action=\"delete-video\"]").forEach(btn => {
-        btn.addEventListener("click", () => deleteVideo(btn.dataset.id));
-    });
-    adminVideosWrap.querySelectorAll("button[data-action=\"edit-video\"]").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const snap = snapshot.docs.find(d => d.id === btn.dataset.id);
-            if (snap) editVideo(btn.dataset.id, snap.data());
-        });
-    });
 }
 
 function renderPosts(snapshot) {
@@ -611,14 +649,6 @@ function subscribePosts() {
     });
 }
 
-function subscribeAdminVideos() {
-    const q = query(collection(db, "videos"), orderBy("createdAt", "desc"));
-    return onSnapshot(q, renderAdminVideos, (err) => {
-        console.error(err);
-        setVideoStatus("تعذر جلب الفيديوهات", true);
-    });
-}
-
 function renderSelectedFiles() {
     if (!selectedList || !fileInput?.files?.length) {
         if (selectedList) selectedList.innerHTML = "";
@@ -643,28 +673,16 @@ function clearFormState() {
 }
 
 function togglePanel(isAdmin) {
+    if (loginCard) loginCard.style.display = isAdmin ? "none" : "grid";
     if (panelCard) panelCard.style.display = isAdmin ? "grid" : "none";
 }
 
-function activateTab(tabId) {
-    if (!tabId) return;
-    tabButtons.forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.adminTab === tabId);
-    });
-    tabPanels.forEach(panel => {
-        panel.classList.toggle("active", panel.id === tabId);
-    });
-    safeStorage.set("adminTab", tabId);
-}
-
-function initTabs() {
-    if (!tabButtons.length || !tabPanels.length) return;
-    const saved = safeStorage.get("adminTab");
-    const defaultTab = (saved && document.getElementById(saved)) ? saved : "galleryTab";
-    activateTab(defaultTab);
-    tabButtons.forEach(btn => {
-        btn.addEventListener("click", () => activateTab(btn.dataset.adminTab));
-    });
+function switchAdminTab(target = "gallery") {
+    const showGallery = target === "gallery";
+    if (gallerySection) gallerySection.style.display = showGallery ? "grid" : "none";
+    if (videosSection) videosSection.style.display = showGallery ? "none" : "grid";
+    if (tabGalleryBtn) tabGalleryBtn.classList.toggle("active", showGallery);
+    if (tabVideosBtn) tabVideosBtn.classList.toggle("active", !showGallery);
 }
 
 function wireAdminUI() {
@@ -674,54 +692,37 @@ function wireAdminUI() {
     if (fileInput) fileInput.addEventListener("change", renderSelectedFiles);
     if (saveHeroBtn) saveHeroBtn.addEventListener("click", saveHeroText);
     if (saveSlotsBtn) saveSlotsBtn.addEventListener("click", saveSlots);
-    if (slotGrid) {
-        slotGrid.addEventListener("change", handleSlotInputChange);
-        slotGrid.addEventListener("input", handleSlotInputChange);
-    }
-    if (saveVideoBtn) saveVideoBtn.addEventListener("click", saveVideo);
-    initTabs();
+    if (addVideoBtn) addVideoBtn.addEventListener("click", addVideo);
+    if (tabGalleryBtn) tabGalleryBtn.addEventListener("click", () => switchAdminTab("gallery"));
+    if (tabVideosBtn) tabVideosBtn.addEventListener("click", () => switchAdminTab("videos"));
 
+    let unsubscribePosts = null;
     onAuthStateChanged(auth, (user) => {
-        const fakeAdmin = safeStorage.get("fakeAdmin") === "true";
+        const fakeAdmin = localStorage.getItem("fakeAdmin") === "true";
         const ok = (!!user && (user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase() || user.uid === ADMIN_UID)) || fakeAdmin;
         togglePanel(ok);
         if (ok) {
             setStatus("");
             loadHeroText();
             buildSlotsForm();
-            hydrateSlotsForm();
-            unsubscribeGallery = unsubscribeGallery || subscribePosts();
-            unsubscribeVideos = unsubscribeVideos || subscribeAdminVideos();
+            switchAdminTab("gallery");
+            unsubscribePosts = unsubscribePosts || subscribePosts();
+            unsubscribeVideos = unsubscribeVideos || subscribeVideos();
         } else {
             if (user && !ok) signOut(auth);
-            safeStorage.remove("fakeAdmin");
-            if (unsubscribeGallery) unsubscribeGallery();
+            if (unsubscribePosts) unsubscribePosts();
             if (unsubscribeVideos) unsubscribeVideos();
-            unsubscribeGallery = null;
+            unsubscribePosts = null;
             unsubscribeVideos = null;
             if (postsWrap) postsWrap.innerHTML = "";
-            if (adminVideosWrap) adminVideosWrap.innerHTML = "";
-            if (statusEl) {
-                statusEl.innerHTML = `<a href="admin-login.html" class="status-link">الرجاء تسجيل الدخول من صفحة الأدمن</a>`;
-                statusEl.className = "status error show";
-            }
+            if (adminVideosList) adminVideosList.innerHTML = "";
         }
     });
 }
 
 document.addEventListener("DOMContentLoaded", wireAdminUI);
 
-export {
-    adminLogin,
-    logoutAdmin,
-    uploadPost,
-    renderPosts,
-    deletePost,
-    subscribePosts,
-    saveVideo,
-    subscribeAdminVideos,
-    deleteVideo
-};
+export { adminLogin, logoutAdmin, uploadPost, renderPosts, deletePost, subscribePosts };
 
 async function uploadToCloudinary(file) {
     const form = new FormData();
