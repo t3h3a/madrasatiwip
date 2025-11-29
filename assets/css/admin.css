@@ -37,7 +37,7 @@
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(255, 255, 255, 0.04);
-    color: #e2e8f0;
+    color: #000000;
     cursor: pointer;
     font-weight: 800;
     display: inline-flex;
@@ -82,7 +82,7 @@
 
 .admin-header p {
     margin: 4px 0 0;
-    color: #cbd5e1;
+    color: #4196ff;
     font-size: 14px;
 }
 
@@ -96,7 +96,7 @@
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(255, 255, 255, 0.05);
-    color: #e5e7eb;
+    color: #3e4e70;
     font-size: 15px;
     resize: vertical;
 }
@@ -141,7 +141,7 @@
 
 /* حقول عامة داخل كروت الأدمن (تشمل عناوين/أوصاف المجموعة) */
 .card-block input,
-.card-block textarea,
+.card-block textarea,ش
 .card-block select {
     width: 100%;
     padding: 12px 14px;
