@@ -46,73 +46,139 @@
         <div class="admin-header">
             <div>
                 <p class="eyebrow">لوحة التحكم</p>
-                <h1>إدارة معرض الإنجازات</h1>
+                <h1>إدارة المحتوى</h1>
             </div>
             <div class="admin-actions">
                 <button id="adminLogout" class="danger">تسجيل الخروج</button>
             </div>
         </div>
 
-        <div class="admin-grid">
-            <div class="card-block">
-                <div class="block-title">
-                    <h2>رفع منشور جديد</h2>
-                    <p>أضف مجموعة صور مع عنوان ووصف.</p>
-                </div>
-                <div class="admin-form">
-                    <label>
-                        عنوان مجموعة المنشور
-                        <input id="postGroupTitle" type="text" placeholder="عنوان المعرض (اختياري)">
-                    </label>
-                    <label>
-                        مقدمة المجموعة
-                        <textarea id="postGroupIntro" rows="2" placeholder="وصف يظهر قبل الصور (اختياري)"></textarea>
-                    </label>
-                    <label>
-                        عنوان المنشور
-                        <input id="postTitle" type="text" placeholder="عنوان لكل الصور">
-                    </label>
-                    <label>
-                        الصور
-                        <input id="postImage" type="file" accept="image/*" multiple>
-                    </label>
-                    <div id="selectedImages" class="image-list"></div>
-                    <div class="admin-actions">
-                        <button type="button" id="addPostBtn">نشر الصور</button>
+        <div class="admin-tabs">
+            <button class="tab-btn active" data-admin-tab="galleryTab">
+                <i class="fa-solid fa-images"></i>
+                إدارة المعرض
+            </button>
+            <button class="tab-btn" data-admin-tab="videosTab">
+                <i class="fa-solid fa-video"></i>
+                إدارة الفيديوهات
+            </button>
+        </div>
+
+        <section id="galleryTab" class="tab-panel active">
+            <div class="admin-grid">
+                <div class="card-block">
+                    <div class="block-title">
+                        <h2>رفع منشور جديد</h2>
+                        <p>أضف مجموعة صور مع عنوان ووصف.</p>
+                    </div>
+                    <div class="admin-form">
+                        <label>
+                            عنوان مجموعة المنشور
+                            <input id="postGroupTitle" type="text" placeholder="عنوان المعرض (اختياري)">
+                        </label>
+                        <label>
+                            مقدمة المجموعة
+                            <textarea id="postGroupIntro" rows="2" placeholder="وصف يظهر قبل الصور (اختياري)"></textarea>
+                        </label>
+                        <label>
+                            عنوان المنشور
+                            <input id="postTitle" type="text" placeholder="عنوان لكل الصور">
+                        </label>
+                        <label>
+                            الصور
+                            <input id="postImage" type="file" accept="image/*" multiple>
+                        </label>
+                        <div id="selectedImages" class="image-list"></div>
+                        <div class="admin-actions">
+                            <button type="button" id="addPostBtn">نشر الصور</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="card-block">
-            <div class="block-title">
-                <h2>نشر سريع بعدة بطاقات</h2>
-                <p>املأ البطاقات التالية ثم اضغط نشر دفعة واحدة.</p>
+            <div class="card-block">
+                <div class="block-title">
+                    <h2>نشر سريع بعدة بطاقات</h2>
+                    <p>املأ البطاقات التالية ثم اضغط نشر دفعة واحدة.</p>
+                </div>
+                <div class="dual-inputs">
+                    <label>
+                        عنوان المجموعة
+                        <input id="slotGroupTitle" type="text" placeholder="عنوان المعرض">
+                    </label>
+                    <label>
+                        وصف المجموعة
+                        <input id="slotGroupIntro" type="text" placeholder="مقدمة قصيرة">
+                    </label>
+                </div>
+                <div id="slotGrid" class="slot-grid"></div>
+                <div class="admin-actions">
+                    <button type="button" id="saveSlotsBtn">نشر البطاقات</button>
+                </div>
+                <div id="slotsStatus" class="status"></div>
             </div>
-            <div class="dual-inputs">
-                <label>
-                    عنوان المجموعة
-                    <input id="slotGroupTitle" type="text" placeholder="عنوان المعرض">
-                </label>
-                <label>
-                    وصف المجموعة
-                    <input id="slotGroupIntro" type="text" placeholder="مقدمة قصيرة">
-                </label>
-            </div>
-            <div id="slotGrid" class="slot-grid"></div>
-            <div class="admin-actions">
-                <button type="button" id="saveSlotsBtn">نشر البطاقات</button>
-            </div>
-            <div id="slotsStatus" class="status"></div>
-        </div>
 
-        <div class="card-block">
-            <div class="block-title">
-                <h2>المنشورات الحالية</h2>
-                <p>يمكنك التعديل أو الحذف مباشرة.</p>
+            <div class="card-block">
+                <div class="block-title">
+                    <h2>المنشورات الحالية</h2>
+                    <p>يمكنك التعديل أو الحذف مباشرة.</p>
+                </div>
+                <div class="posts-wrap" id="adminPosts"></div>
             </div>
-            <div class="posts-wrap" id="adminPosts"></div>
-        </div>
+        </section>
+
+        <section id="videosTab" class="tab-panel">
+            <div class="admin-grid admin-grid--tabs">
+                <div class="card-block">
+                    <div class="block-title">
+                        <h2>إضافة فيديو جديد</h2>
+                        <p>ارفع ملف فيديو أو أضف رابط خارجي مع صورة مصغرة.</p>
+                    </div>
+                    <div class="admin-form">
+                        <label>
+                            عنوان الفيديو
+                            <input id="videoTitle" type="text" placeholder="عنوان واضح">
+                        </label>
+                        <label>
+                            وصف الفيديو
+                            <textarea id="videoDescription" rows="2" placeholder="نبذة مختصرة (اختياري)"></textarea>
+                        </label>
+                        <div class="dual-inputs">
+                            <label>
+                                رابط الفيديو
+                                <input id="videoUrl" type="url" placeholder="https://example.com/video.mp4 أو رابط YouTube">
+                            </label>
+                            <label>
+                                حالة النشر
+                                <select id="videoPublish">
+                                    <option value="published">منشور</option>
+                                    <option value="draft">مسودة</option>
+                                </select>
+                            </label>
+                        </div>
+                        <label>
+                            رفع ملف فيديو
+                            <input id="videoFile" type="file" accept="video/*">
+                        </label>
+                        <label>
+                            صورة مصغرة (اختياري)
+                            <input id="videoThumb" type="file" accept="image/*">
+                        </label>
+                        <div class="admin-actions">
+                            <button type="button" id="saveVideoBtn">حفظ الفيديو</button>
+                        </div>
+                        <div id="videoStatus" class="status"></div>
+                    </div>
+                </div>
+                <div class="card-block">
+                    <div class="block-title">
+                        <h2>الفيديوهات الحالية</h2>
+                        <p>تحكم سريع بالتعديل أو الحذف.</p>
+                    </div>
+                    <div class="posts-wrap videos-admin-list" id="adminVideos"></div>
+                </div>
+            </div>
+        </section>
     </div>
 </main>
 

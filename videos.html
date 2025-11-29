@@ -82,31 +82,9 @@
             <p class="section-subtitle" data-i18n="videos.subtitle">
                 فيديوهات تساعدك تفهم نظام BTEC من الطلاب ومعلمي الاختصاص.
             </p>
+            <p id="videosStatus" class="section-subtitle" style="text-align: center;"></p>
 
             <div class="videos-grid">
-
-                <!-- بطاقة فيديو -->
-                <div class="video-card" data-video="assets/vid/vid1.mp4">
-                    <div class="video-thumb">
-                        <video src="assets/vid/vid1.mp4" muted loop playsinline autoplay></video>
-                    </div>
-                    <div>
-                        <h3 data-i18n="videos.card1.title">🔶 فيديو تعريفي عن تخصص الضيافة</h3>
-                        <p data-i18n="videos.card1.desc">شرح بسيط عن المسار، وين بيشتغل الطالب، ومحتوى الدروس العملية والنظرية.</p>
-                    </div>
-                </div>
-
-                <!-- بطاقة فيديو -->
-                <div class="video-card" data-video="assets/vid/vid2.mp4">
-                    <div class="video-thumb">
-                        <video src="assets/vid/vid2.mp4" muted loop playsinline autoplay></video>
-                    </div>
-                    <div>
-                        <h3 data-i18n="videos.card2.title">💻 رأي طالب IT في نظام BTEC</h3>
-                        <p data-i18n="videos.card2.desc">طالب IT يشرح تجربته مع نظام BTEC وكيف ساعده يطوّر مهاراته.</p>
-                    </div>
-                </div>
-
             </div>
 
         </div>
@@ -121,6 +99,7 @@
             </button>
 
             <video id="popupVideo" controls></video>
+            <div id="popupEmbed" class="video-embed" hidden></div>
 
             <div class="video-controls">
                 <button id="rewind10"><i class="fa-solid fa-rotate-left"></i></button>
@@ -152,6 +131,7 @@
         </div>
     </footer>
 
+    <script type="module" src="assets/js/videos-feed.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/videos.js"></script>
     <script src="assets/js/dark-mode.js"></script>

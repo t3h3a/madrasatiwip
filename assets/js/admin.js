@@ -41,8 +41,21 @@ const saveSlotsBtn = document.getElementById("saveSlotsBtn");
 const slotsStatus = document.getElementById("slotsStatus");
 const slotGroupTitleInput = document.getElementById("slotGroupTitle");
 const slotGroupIntroInput = document.getElementById("slotGroupIntro");
+const tabButtons = document.querySelectorAll("[data-admin-tab]");
+const tabPanels = document.querySelectorAll(".tab-panel");
+const videoTitleInput = document.getElementById("videoTitle");
+const videoDescriptionInput = document.getElementById("videoDescription");
+const videoUrlInput = document.getElementById("videoUrl");
+const videoFileInput = document.getElementById("videoFile");
+const videoThumbInput = document.getElementById("videoThumb");
+const videoPublishSelect = document.getElementById("videoPublish");
+const saveVideoBtn = document.getElementById("saveVideoBtn");
+const videoStatusEl = document.getElementById("videoStatus");
+const adminVideosWrap = document.getElementById("adminVideos");
 const SLOT_COUNT = 11;
 let slotState = Array.from({ length: SLOT_COUNT }, () => ({ image: "", title: "", caption: "" }));
+let unsubscribeGallery = null;
+let unsubscribeVideos = null;
 const FALLBACK_EMAIL = "btecmaad@gmail.com";
 const FALLBACK_PASS = "123456789102008";
 
@@ -55,6 +68,9 @@ function clearLoginInputs() {
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dzrwjhqzu/image/upload";
 const CLOUDINARY_PRESET = "gallery_app";
 const CLOUDINARY_FOLDER = "app_gallery";
+const CLOUDINARY_VIDEO_URL = "https://api.cloudinary.com/v1_1/dzrwjhqzu/video/upload";
+const CLOUDINARY_VIDEO_PRESET = "app_videos";
+const CLOUDINARY_VIDEO_FOLDER = "app_videos";
 
 function setStatus(text, isError = false) {
     if (!statusEl) return;
@@ -68,6 +84,13 @@ function setSlotsStatus(text, isError = false) {
     slotsStatus.textContent = text || "";
     slotsStatus.className = isError ? "status error" : "status";
     if (text) slotsStatus.classList.add("show");
+}
+
+function setVideoStatus(text, isError = false) {
+    if (!videoStatusEl) return;
+    videoStatusEl.textContent = text || "";
+    videoStatusEl.className = isError ? "status error" : "status";
+    if (text) videoStatusEl.classList.add("show");
 }
 
 async function adminLogin(e) {
@@ -347,6 +370,162 @@ async function editPost(id, data) {
     }
 }
 
+async function uploadVideoToCloudinary(file) {
+    const form = new FormData();
+    form.append("file", file);
+    form.append("upload_preset", CLOUDINARY_VIDEO_PRESET);
+    form.append("folder", CLOUDINARY_VIDEO_FOLDER);
+    const res = await fetch(CLOUDINARY_VIDEO_URL, { method: "POST", body: form });
+    if (!res.ok) throw new Error("video-upload-failed");
+    const json = await res.json();
+    if (!json.secure_url) throw new Error("no-video-url");
+    return json.secure_url;
+}
+
+function clearVideoForm() {
+    if (videoTitleInput) videoTitleInput.value = "";
+    if (videoDescriptionInput) videoDescriptionInput.value = "";
+    if (videoUrlInput) videoUrlInput.value = "";
+    if (videoFileInput) videoFileInput.value = "";
+    if (videoThumbInput) videoThumbInput.value = "";
+    if (videoPublishSelect) videoPublishSelect.value = "published";
+}
+
+async function saveVideo() {
+    const title = videoTitleInput?.value?.trim() || "";
+    const description = videoDescriptionInput?.value?.trim() || "";
+    const link = videoUrlInput?.value?.trim() || "";
+    const videoFile = videoFileInput?.files?.[0];
+    const thumbFile = videoThumbInput?.files?.[0];
+    const published = (videoPublishSelect?.value || "published") === "published";
+
+    if (!title) {
+        setVideoStatus("أدخل عنوان الفيديو", true);
+        return;
+    }
+    if (!link && !videoFile) {
+        setVideoStatus("أضف رابطاً أو ارفع ملف فيديو", true);
+        return;
+    }
+
+    setVideoStatus("...جاري حفظ الفيديو");
+    try {
+        let finalVideoUrl = link;
+        let source = "link";
+        if (videoFile) {
+            finalVideoUrl = await uploadVideoToCloudinary(videoFile);
+            source = "upload";
+        }
+        let thumbUrl = "";
+        if (thumbFile) {
+            thumbUrl = await uploadToCloudinary(thumbFile);
+        }
+
+        await addDoc(collection(db, "videos"), {
+            title,
+            description,
+            videoUrl: finalVideoUrl,
+            thumbnailUrl: thumbUrl,
+            published,
+            source,
+            createdAt: Date.now(),
+            createdBy: auth.currentUser?.email || ""
+        });
+
+        clearVideoForm();
+        setVideoStatus("تم حفظ الفيديو");
+    } catch (err) {
+        console.error(err);
+        setVideoStatus("تعذر حفظ الفيديو", true);
+    }
+}
+
+async function deleteVideo(id) {
+    if (!confirm("تأكيد حذف هذا الفيديو؟")) return;
+    try {
+        await deleteDoc(doc(db, "videos", id));
+    } catch (err) {
+        console.error(err);
+        setVideoStatus("تعذر حذف الفيديو", true);
+    }
+}
+
+async function editVideo(id, data) {
+    const newTitle = prompt("تعديل عنوان الفيديو", data.title || "فيديو بدون عنوان");
+    if (newTitle === null) return;
+
+    const newDescription = prompt("وصف الفيديو", data.description || "");
+    if (newDescription === null) return;
+
+    const newUrl = prompt("رابط الفيديو (اتركه كما هو للملف المرفوع)", data.videoUrl || "");
+    if (newUrl === null) return;
+
+    const publishInput = prompt("حالة النشر (منشور/مسودة)", data.published === false ? "مسودة" : "منشور");
+    const published = (publishInput?.trim()?.toLowerCase() || "منشور") !== "مسودة";
+
+    try {
+        await updateDoc(doc(db, "videos", id), {
+            title: newTitle.trim() || data.title || "فيديو بدون عنوان",
+            description: newDescription.trim(),
+            videoUrl: newUrl.trim() || data.videoUrl,
+            published
+        });
+        setVideoStatus("تم تحديث الفيديو");
+    } catch (err) {
+        console.error(err);
+        setVideoStatus("تعذر تعديل الفيديو", true);
+    }
+}
+
+function renderAdminVideos(snapshot) {
+    if (!adminVideosWrap) return;
+    adminVideosWrap.innerHTML = "";
+    if (snapshot.empty) {
+        const empty = document.createElement("p");
+        empty.className = "eyebrow";
+        empty.textContent = "لا يوجد فيديوهات بعد.";
+        adminVideosWrap.appendChild(empty);
+        return;
+    }
+
+    snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const createdAt = data.createdAt ? new Date(data.createdAt).toLocaleString() : "";
+        const published = data.published !== false;
+        const card = document.createElement("article");
+        card.className = "video-admin-card";
+        card.innerHTML = `
+            <div class="video-admin-head">
+                <div>
+                    <p class="eyebrow">${createdAt}</p>
+                    <h3>${data.title || "فيديو بدون عنوان"}</h3>
+                    <div class="video-admin-meta">
+                        <span class="pill ${published ? "published" : "draft"}">${published ? "منشور" : "مسودة"}</span>
+                        <span class="pill">${data.source === "upload" ? "ملف مرفوع" : "رابط خارجي"}</span>
+                    </div>
+                </div>
+                <div class="admin-actions">
+                    <button data-action="edit-video" data-id="${docSnap.id}">تعديل</button>
+                    <button class="danger" data-action="delete-video" data-id="${docSnap.id}">حذف</button>
+                </div>
+            </div>
+            ${data.description ? `<p>${data.description}</p>` : ""}
+            ${data.videoUrl ? `<p class="eyebrow" style="word-break: break-all;">${data.videoUrl}</p>` : ""}
+        `;
+        adminVideosWrap.appendChild(card);
+    });
+
+    adminVideosWrap.querySelectorAll("button[data-action=\"delete-video\"]").forEach(btn => {
+        btn.addEventListener("click", () => deleteVideo(btn.dataset.id));
+    });
+    adminVideosWrap.querySelectorAll("button[data-action=\"edit-video\"]").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const snap = snapshot.docs.find(d => d.id === btn.dataset.id);
+            if (snap) editVideo(btn.dataset.id, snap.data());
+        });
+    });
+}
+
 function renderPosts(snapshot) {
     if (!postsWrap) return;
     postsWrap.innerHTML = "";
@@ -405,6 +584,14 @@ function subscribePosts() {
     });
 }
 
+function subscribeAdminVideos() {
+    const q = query(collection(db, "videos"), orderBy("createdAt", "desc"));
+    return onSnapshot(q, renderAdminVideos, (err) => {
+        console.error(err);
+        setVideoStatus("تعذر جلب الفيديوهات", true);
+    });
+}
+
 function renderSelectedFiles() {
     if (!selectedList || !fileInput?.files?.length) {
         if (selectedList) selectedList.innerHTML = "";
@@ -433,6 +620,27 @@ function togglePanel(isAdmin) {
     if (panelCard) panelCard.style.display = isAdmin ? "grid" : "none";
 }
 
+function activateTab(tabId) {
+    if (!tabId) return;
+    tabButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.adminTab === tabId);
+    });
+    tabPanels.forEach(panel => {
+        panel.classList.toggle("active", panel.id === tabId);
+    });
+    localStorage.setItem("adminTab", tabId);
+}
+
+function initTabs() {
+    if (!tabButtons.length || !tabPanels.length) return;
+    const saved = localStorage.getItem("adminTab");
+    const defaultTab = (saved && document.getElementById(saved)) ? saved : "galleryTab";
+    activateTab(defaultTab);
+    tabButtons.forEach(btn => {
+        btn.addEventListener("click", () => activateTab(btn.dataset.adminTab));
+    });
+}
+
 function wireAdminUI() {
     if (loginForm) loginForm.addEventListener("submit", adminLogin);
     if (logoutBtn) logoutBtn.addEventListener("click", logoutAdmin);
@@ -444,8 +652,9 @@ function wireAdminUI() {
         slotGrid.addEventListener("change", handleSlotInputChange);
         slotGrid.addEventListener("input", handleSlotInputChange);
     }
+    if (saveVideoBtn) saveVideoBtn.addEventListener("click", saveVideo);
+    initTabs();
 
-    let unsubscribe = null;
     onAuthStateChanged(auth, (user) => {
         const fakeAdmin = localStorage.getItem("fakeAdmin") === "true";
         const ok = (!!user && (user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase() || user.uid === ADMIN_UID)) || fakeAdmin;
@@ -455,19 +664,33 @@ function wireAdminUI() {
             loadHeroText();
             buildSlotsForm();
             hydrateSlotsForm();
-            unsubscribe = unsubscribe || subscribePosts();
+            unsubscribeGallery = unsubscribeGallery || subscribePosts();
+            unsubscribeVideos = unsubscribeVideos || subscribeAdminVideos();
         } else {
             if (user && !ok) signOut(auth);
-            if (unsubscribe) unsubscribe();
-            unsubscribe = null;
+            if (unsubscribeGallery) unsubscribeGallery();
+            if (unsubscribeVideos) unsubscribeVideos();
+            unsubscribeGallery = null;
+            unsubscribeVideos = null;
             if (postsWrap) postsWrap.innerHTML = "";
+            if (adminVideosWrap) adminVideosWrap.innerHTML = "";
         }
     });
 }
 
 document.addEventListener("DOMContentLoaded", wireAdminUI);
 
-export { adminLogin, logoutAdmin, uploadPost, renderPosts, deletePost, subscribePosts };
+export {
+    adminLogin,
+    logoutAdmin,
+    uploadPost,
+    renderPosts,
+    deletePost,
+    subscribePosts,
+    saveVideo,
+    subscribeAdminVideos,
+    deleteVideo
+};
 
 async function uploadToCloudinary(file) {
     const form = new FormData();

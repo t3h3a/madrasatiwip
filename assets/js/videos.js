@@ -1,196 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // عناصر رئيسية من الصفحة
-    const videoCards   = document.querySelectorAll(".video-card");
-    const popup        = document.getElementById("videoPopup");
-    const popupVideo   = document.getElementById("popupVideo");
-    const closePopup   = document.getElementById("closePopup");
-    const btnRewind10  = document.getElementById("rewind10");
+    const grid = document.querySelector(".videos-grid");
+    const popup = document.getElementById("videoPopup");
+    const popupVideo = document.getElementById("popupVideo");
+    const popupEmbed = document.getElementById("popupEmbed");
+    const closePopup = document.getElementById("closePopup");
+    const btnRewind10 = document.getElementById("rewind10");
     const btnForward10 = document.getElementById("forward10");
     const btnPlayPause = document.getElementById("playPause");
+    const controls = document.querySelector(".video-controls");
 
-    let currentVideoSrc = "";
+    const VIDEO_EXT = /\.(mp4|webm|ogg)$/i;
+    let currentMode = "file"; // file | embed
 
-    // تشغيل الفيديوهات في البطاقات (بدون صوت)
-    videoCards.forEach(card => {
-        const thumbVideo = card.querySelector(".video-thumb video");
-        if (thumbVideo) {
-            // تأكد إنه الفيديو muted و loop
-            thumbVideo.muted = true;
-            thumbVideo.loop = true;
-            
-            // حاول تشغيل الفيديو
-            thumbVideo.play().catch(() => {
-                // لو المتصفح منع autoplay، ما مشكلة
-            });
+    function isFileVideo(url) {
+        return VIDEO_EXT.test(url || "");
+    }
+
+    function toEmbedUrl(url) {
+        const yt = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/i);
+        if (yt && yt[1]) {
+            return `https://www.youtube.com/embed/${yt[1]}?rel=0&autoplay=1`;
         }
-    });
-
-    // ============= فتح البوب-أب مع فيديو جديد =============
-    function openVideoPopup(src) {
-        if (!popup || !popupVideo) return;
-
-        currentVideoSrc = src;
-
-        // نظّف أي فيديو قديم
-        popupVideo.pause();
-        popupVideo.removeAttribute("src");
-        popupVideo.load();
-
-        // افتح البوب أب أولاً
-        popup.classList.add("active");
-        document.body.style.overflow = "hidden"; // يمنع سكرول الخلفية
-
-        // حط مصدر الفيديو الجديد
-        popupVideo.src = src;
-        popupVideo.currentTime = 0; // إعادة من البداية
-        popupVideo.muted = false; // تفعيل الصوت
-        popupVideo.loop = false; // بدون تكرار في النافذة الكبيرة
-
-        // إعادة تحميل الفيديو
-        popupVideo.load();
-
-        // انتظر حتى يكون الفيديو جاهز ثم شغّله
-        popupVideo.addEventListener("loadeddata", function playVideo() {
-            popupVideo.play()
-                .then(() => {
-                    setPlayIcon("pause");
-                })
-                .catch((error) => {
-                    // لو المتصفح منع autoplay، المستخدم لازم يضغط play
-                    setPlayIcon("play");
-                });
-            // إزالة الـ listener بعد الاستخدام
-            popupVideo.removeEventListener("loadeddata", playVideo);
-        }, { once: true });
+        return url;
     }
 
-    // ============= إغلاق البوب-أب =============
-    function closeVideoPopup() {
-        if (!popup || !popupVideo) return;
-
-        // إيقاف وإعادة الفيديو من البداية
-        popupVideo.pause();
-        popupVideo.currentTime = 0;
-        popupVideo.removeAttribute("src");
-        popupVideo.load();
-        setPlayIcon("play");
-
-        // إغلاق البوب أب
-        popup.classList.remove("active");
-        document.body.style.overflow = ""; // رجّع سكرول الصفحة
-
-        // إعادة تشغيل الفيديوهات في البطاقات
-        videoCards.forEach(card => {
-            const thumbVideo = card.querySelector(".video-thumb video");
-            if (thumbVideo) {
-                thumbVideo.currentTime = 0;
-                thumbVideo.muted = true; // تأكد إنه بدون صوت
-                thumbVideo.loop = true; // تأكد إنه loop
-                thumbVideo.play().catch(() => {
-                    // لو المتصفح منع autoplay
-                });
-            }
-        });
-    }
-
-    // زر X
-    if (closePopup) {
-        closePopup.addEventListener("click", closeVideoPopup);
-    }
-
-    // كليك على الخلفية (خارج صندوق الفيديو)
-    if (popup) {
-        popup.addEventListener("click", (e) => {
-            if (e.target === popup) {
-                closeVideoPopup();
-            }
-        });
-    }
-
-    // زر ESC من الكيبورد
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && popup?.classList.contains("active")) {
-            closeVideoPopup();
-        }
-    });
-
-    // ============= التعامل مع كروت الفيديو =============
-    videoCards.forEach(card => {
-        // منع النقر على الفيديو نفسه (نضغط على البطاقة فقط)
-        const thumbVideo = card.querySelector(".video-thumb video");
-        if (thumbVideo) {
-            thumbVideo.addEventListener("click", (e) => {
-                e.stopPropagation(); // منع انتشار الحدث للبطاقة
-            });
-        }
-
-        card.addEventListener("click", (e) => {
-            // لو ضغط على الفيديو نفسه، ما نعمل شي
-            if (e.target.tagName === "VIDEO") {
-                return;
-            }
-
-            const src = card.dataset.video;
-            if (!src) return;
-
-            // إيقاف الفيديو في البطاقة
-            if (thumbVideo) {
-                thumbVideo.pause();
-            }
-
-            // فتح الفيديو في وضع ملء الشاشة
-            openVideoPopup(src);
-        });
-    });
-
-    // ============= أزرار التحكم =============
-
-    // زر رجوع 10 ثواني
-    if (btnRewind10) {
-        btnRewind10.addEventListener("click", () => {
-            if (!popupVideo) return;
-            popupVideo.currentTime = Math.max(popupVideo.currentTime - 10, 0);
-        });
-    }
-
-    // زر تقديم 10 ثواني
-    if (btnForward10) {
-        btnForward10.addEventListener("click", () => {
-            if (!popupVideo) return;
-            const duration = popupVideo.duration || popupVideo.currentTime + 10;
-            popupVideo.currentTime = Math.min(popupVideo.currentTime + 10, duration);
-        });
-    }
-
-    // زر تشغيل / إيقاف
-    if (btnPlayPause) {
-        btnPlayPause.addEventListener("click", () => {
-            if (!popupVideo) return;
-
-            if (popupVideo.paused) {
-                popupVideo.play()
-                    .then(() => setPlayIcon("pause"))
-                    .catch(() => {});
-            } else {
-                popupVideo.pause();
-                setPlayIcon("play");
-            }
-        });
-    }
-
-    // لما الفيديو يخلص
-    if (popupVideo) {
-        popupVideo.addEventListener("ended", () => {
-            setPlayIcon("play");
-        });
-    }
-
-    // تغيير آيقونة زر التشغيل
     function setPlayIcon(mode) {
         if (!btnPlayPause) return;
         const icon = btnPlayPause.querySelector("i");
         if (!icon) return;
-
         if (mode === "pause") {
             icon.classList.remove("fa-play");
             icon.classList.add("fa-pause");
@@ -199,4 +36,136 @@ document.addEventListener("DOMContentLoaded", () => {
             icon.classList.add("fa-play");
         }
     }
+
+    function enableThumbAutoplay() {
+        if (!grid) return;
+        grid.querySelectorAll(".video-thumb video").forEach(vid => {
+            vid.muted = true;
+            vid.loop = true;
+            vid.playsInline = true;
+            vid.play().catch(() => {});
+        });
+    }
+
+    function openVideoPopup(src, mode) {
+        if (!popup) return;
+        currentMode = mode;
+        document.body.style.overflow = "hidden";
+        popup.classList.add("active");
+
+        if (mode === "file") {
+            if (popupEmbed) {
+                popupEmbed.innerHTML = "";
+                popupEmbed.hidden = true;
+            }
+            if (controls) controls.style.display = "";
+            if (popupVideo) {
+                popupVideo.hidden = false;
+                popupVideo.pause();
+                popupVideo.removeAttribute("src");
+                popupVideo.load();
+                popupVideo.src = src;
+                popupVideo.currentTime = 0;
+                popupVideo.muted = false;
+                popupVideo.loop = false;
+                popupVideo.load();
+                popupVideo.addEventListener("loadeddata", function playVideo() {
+                    popupVideo.play().then(() => setPlayIcon("pause")).catch(() => setPlayIcon("play"));
+                    popupVideo.removeEventListener("loadeddata", playVideo);
+                }, { once: true });
+            }
+        } else {
+            if (popupVideo) {
+                popupVideo.pause();
+                popupVideo.hidden = true;
+                popupVideo.removeAttribute("src");
+                popupVideo.load();
+            }
+            if (controls) controls.style.display = "none";
+            if (popupEmbed) {
+                popupEmbed.hidden = false;
+                popupEmbed.innerHTML = `<iframe src="${toEmbedUrl(src)}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+            }
+        }
+    }
+
+    function closeVideoPopup() {
+        if (!popup) return;
+        if (currentMode === "file" && popupVideo) {
+            popupVideo.pause();
+            popupVideo.currentTime = 0;
+            popupVideo.removeAttribute("src");
+            popupVideo.load();
+        }
+        if (currentMode === "embed" && popupEmbed) {
+            popupEmbed.innerHTML = "";
+            popupEmbed.hidden = true;
+        }
+        if (controls) controls.style.display = "";
+        setPlayIcon("play");
+        popup.classList.remove("active");
+        document.body.style.overflow = "";
+        enableThumbAutoplay();
+    }
+
+    function handleCardClick(card) {
+        const src = card.dataset.videoSrc || card.dataset.video;
+        if (!src) return;
+        const mode = card.dataset.videoType === "embed" || !isFileVideo(src) ? "embed" : "file";
+        const thumbVideo = card.querySelector(".video-thumb video");
+        if (thumbVideo) thumbVideo.pause();
+        openVideoPopup(src, mode);
+    }
+
+    if (grid) {
+        grid.addEventListener("click", (e) => {
+            const card = e.target.closest(".video-card");
+            if (!card) return;
+            if (e.target.tagName === "VIDEO") return;
+            handleCardClick(card);
+        });
+    }
+
+    if (closePopup) closePopup.addEventListener("click", closeVideoPopup);
+    if (popup) {
+        popup.addEventListener("click", (e) => {
+            if (e.target === popup) closeVideoPopup();
+        });
+    }
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && popup?.classList.contains("active")) {
+            closeVideoPopup();
+        }
+    });
+
+    if (btnRewind10) {
+        btnRewind10.addEventListener("click", () => {
+            if (!popupVideo || currentMode !== "file") return;
+            popupVideo.currentTime = Math.max(popupVideo.currentTime - 10, 0);
+        });
+    }
+    if (btnForward10) {
+        btnForward10.addEventListener("click", () => {
+            if (!popupVideo || currentMode !== "file") return;
+            const duration = popupVideo.duration || popupVideo.currentTime + 10;
+            popupVideo.currentTime = Math.min(popupVideo.currentTime + 10, duration);
+        });
+    }
+    if (btnPlayPause) {
+        btnPlayPause.addEventListener("click", () => {
+            if (!popupVideo || currentMode !== "file") return;
+            if (popupVideo.paused) {
+                popupVideo.play().then(() => setPlayIcon("pause")).catch(() => {});
+            } else {
+                popupVideo.pause();
+                setPlayIcon("play");
+            }
+        });
+    }
+    if (popupVideo) {
+        popupVideo.addEventListener("ended", () => setPlayIcon("play"));
+    }
+
+    document.addEventListener("videos:rendered", enableThumbAutoplay);
+    enableThumbAutoplay();
 });
