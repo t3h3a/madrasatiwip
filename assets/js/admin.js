@@ -616,7 +616,6 @@ function clearFormState() {
 }
 
 function togglePanel(isAdmin) {
-    if (loginCard) loginCard.style.display = isAdmin ? "none" : "grid";
     if (panelCard) panelCard.style.display = isAdmin ? "grid" : "none";
 }
 
@@ -668,12 +667,15 @@ function wireAdminUI() {
             unsubscribeVideos = unsubscribeVideos || subscribeAdminVideos();
         } else {
             if (user && !ok) signOut(auth);
+            localStorage.removeItem("fakeAdmin");
             if (unsubscribeGallery) unsubscribeGallery();
             if (unsubscribeVideos) unsubscribeVideos();
             unsubscribeGallery = null;
             unsubscribeVideos = null;
             if (postsWrap) postsWrap.innerHTML = "";
             if (adminVideosWrap) adminVideosWrap.innerHTML = "";
+            setStatus("الرجاء تسجيل الدخول من صفحة الأدمن", true);
+            setTimeout(() => window.location.href = "admin-login.html", 800);
         }
     });
 }
