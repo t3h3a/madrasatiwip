@@ -1,64 +1,120 @@
-import { auth, ADMIN_EMAIL, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "./firebase-config.js";
-import { signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import {
+    auth,
+    ADMIN_EMAIL,
+    ADMIN_UID,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+} from "./firebase-config.js";
 
 const FALLBACK_EMAIL = "btecmaad@gmail.com";
 const FALLBACK_PASS = "123456789102008";
 
-function setStatus(message, isError = false) {
-    const statusEl = document.getElementById("adminLoginStatus");
+const loginForm = document.getElementById("adminLoginForm");
+const loginButton = document.getElementById("adminLoginButton");
+const statusEl = document.getElementById("adminLoginStatus");
+
+function setStatus(message = "", isError = false) {
     if (!statusEl) return;
-    statusEl.textContent = message || "";
+    statusEl.textContent = message;
     statusEl.className = isError ? "status error" : "status";
     if (message) statusEl.classList.add("show");
 }
 
-async function loginAdmin(email, password) {
-    setStatus("...جاري تسجيل الدخول");
+function setLoading(isLoading = false) {
+    if (!loginButton) return;
+    loginButton.disabled = isLoading;
+    loginButton.classList.toggle("is-loading", isLoading);
+}
+
+function redirectToPanel() {
+    window.location.replace("admin-panel.html");
+}
+
+function isAdminUser(user) {
+    if (!user) return false;
+    const email = (user.email || "").toLowerCase();
+    return email === ADMIN_EMAIL.toLowerCase() || user.uid === ADMIN_UID;
+}
+
+async function handleFirebaseLogin(email, password) {
     try {
-        const cred = await signInWithEmailAndPassword(auth, email, password);
-        const userEmail = cred?.user?.email || "";
-        if (userEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
-            window.location.href = "admin-panel.html";
-            return;
+        setStatus("...جاري التحقق");
+        const credential = await signInWithEmailAndPassword(auth, email, password);
+        if (isAdminUser(credential?.user)) {
+            redirectToPanel();
+            return true;
         }
         await signOut(auth);
-        setStatus("هذا الحساب ليس أدمن", true);
-    } catch (err) {
-        if (err?.code === "auth/user-not-found" && email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+        setStatus("هذا الحساب غير مخول كأدمن", true);
+        return false;
+    } catch (error) {
+        if (error?.code === "auth/user-not-found" && email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
-                setStatus("تم إنشاء حساب الأدمن، أعد تسجيل الدخول");
-                return;
-            } catch (createErr) {
-                console.error(createErr);
+                setStatus("تم إنشاء حساب الأدمن، أعد المحاولة");
+                return false;
+            } catch (createError) {
+                console.error(createError);
                 setStatus("تعذر إنشاء حساب الأدمن", true);
-                return;
+                return false;
             }
         }
-        if (email.toLowerCase() === FALLBACK_EMAIL.toLowerCase() && password === FALLBACK_PASS) {
-            localStorage.setItem("fakeAdmin", "true");
-            window.location.href = "admin-panel.html";
-            return;
-        }
-        console.error(err);
-        setStatus(err?.message || "خطأ في تسجيل الدخول", true);
+        throw error;
     }
 }
 
-function wireForm() {
-    const form = document.getElementById("adminLoginForm");
-    if (!form) return;
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const formData = new FormData(form);
-        const email = (formData.get("email") || "").toString().trim();
-        const password = (formData.get("password") || "").toString().trim();
-        if (!email || !password) {
-            setStatus("أدخل البريد وكلمة المرور", true);
+async function attemptFallbackOrFail(email, password) {
+    if (email.toLowerCase() === FALLBACK_EMAIL.toLowerCase() && password === FALLBACK_PASS) {
+        localStorage.setItem("fakeAdmin", "true");
+        redirectToPanel();
+        return true;
+    }
+    return false;
+}
+
+async function handleSubmit(event) {
+    event.preventDefault();
+    if (!loginForm) return;
+    const data = new FormData(loginForm);
+    const email = (data.get("email") || "").toString().trim();
+    const password = (data.get("password") || "").toString();
+
+    if (!email || !password) {
+        setStatus("أدخل البريد الإلكتروني وكلمة المرور", true);
+        return;
+    }
+
+    setLoading(true);
+    try {
+        await handleFirebaseLogin(email, password);
+    } catch (error) {
+        console.error(error);
+        if (await attemptFallbackOrFail(email, password)) {
             return;
         }
-        await loginAdmin(email, password);
+        setStatus(error?.message || "خطأ أثناء تسجيل الدخول", true);
+    } finally {
+        setLoading(false);
+    }
+}
+
+function ensureAdminRedirect() {
+    onAuthStateChanged(auth, (user) => {
+        const fakeAdmin = localStorage.getItem("fakeAdmin") === "true";
+        if (fakeAdmin || isAdminUser(user)) {
+            redirectToPanel();
+        }
     });
 }
 
-document.addEventListener("DOMContentLoaded", wireForm);
+function wireForm() {
+    if (!loginForm) return;
+    loginForm.addEventListener("submit", handleSubmit);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    wireForm();
+    ensureAdminRedirect();
+});

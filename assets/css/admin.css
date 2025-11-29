@@ -644,6 +644,49 @@
     font-size: 14px;
 }
 
+.admin-login-header {
+    display: grid;
+    gap: 6px;
+}
+
+.admin-login-highlights {
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 8px;
+}
+
+.admin-login-highlights li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #cbd5e1;
+    font-size: 13px;
+}
+
+.admin-login-highlights li i {
+    color: #22c55e;
+    width: 20px;
+    text-align: center;
+}
+
+.login-meta {
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 13px;
+}
+
+.login-meta a {
+    color: #22c55e;
+    font-weight: 700;
+    text-decoration: none;
+}
+
 hr {
     border: none;
     height: 1px;

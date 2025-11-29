@@ -13,36 +13,43 @@
 <body data-page="admin-login">
 
 <main class="admin-login-shell">
-    <div class="admin-login-card">
-        <div>
-            <p class="eyebrow">لوحة الحماية</p>
-            <h1>تسجيل دخول الأدمن</h1>
-            <p class="muted">الدخول مخصص للبريد المصرّح به لإدارة المعرض.</p>
-        </div>
+    <section class="admin-login-card">
+        <header class="admin-login-header">
+            <p class="eyebrow">مدخل الأستاذ</p>
+            <h1>لوحة إدارة المعرض</h1>
+            <p class="muted">استخدم البريد المصرّح به للوصول الآمن إلى إعدادات المنتدى والمحتوى.</p>
+        </header>
 
-        <form id="adminLoginForm" class="admin-form">
+        <form id="adminLoginForm" class="admin-form" autocomplete="on">
             <label>
                 البريد الإلكتروني
-                <input type="email" name="email" placeholder="admin@email.com" autocomplete="username" required>
+                <input id="adminEmail" name="email" type="email" placeholder="admin@domain.com" autocomplete="username" required>
             </label>
             <label>
                 كلمة المرور
-                <input type="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+                <input id="adminPassword" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required>
             </label>
-            <button type="submit">
+            <button id="adminLoginButton" type="submit">
                 <i class="fa-solid fa-shield-halved"></i>
-                دخول
+                دخول آمن
             </button>
         </form>
 
         <div id="adminLoginStatus" class="status"></div>
 
-        <p class="muted">
-            <a href="settings.html" style="color: #22c55e; font-weight: 700; text-decoration: none;">عودة للإعدادات</a>
-        </p>
-    </div>
+        <ul class="admin-login-highlights">
+            <li><i class="fa-solid fa-lock"></i> تحقق مباشر مع Firebase Auth</li>
+            <li><i class="fa-solid fa-bolt"></i> إعادة التوجيه الفوري إلى لوحة الأدمن بعد المصادقة</li>
+            <li><i class="fa-solid fa-circle-info"></i> يمكن الرجوع إلى الإعدادات من دون الخروج من الواجهة</li>
+        </ul>
+
+        <div class="login-meta">
+            <p class="muted">سيتم حفظ الجلسة تلقائياً حتى تسجيل الخروج.</p>
+            <p class="muted"><a href="settings.html">رجوع إلى الإعدادات</a></p>
+        </div>
+    </section>
 </main>
 
-<script src="assets/js/admin-login.bundle.js"></script>
+<script type="module" src="assets/js/admin-login.js"></script>
 </body>
 </html>
