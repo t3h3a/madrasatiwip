@@ -248,13 +248,14 @@ function buildSlotsForm() {
     if (!slotGrid) return;
     slotGrid.innerHTML = "";
     for (let i = 0; i < SLOT_COUNT; i++) {
+        const label = `رفع صورة البطاقة ${i + 1}`;
         const card = document.createElement("div");
         card.className = "slot-card";
         card.innerHTML = `
             <div class="slot-preview" data-slot-preview="${i}">صورة ${i + 1}</div>
-            <input type="file" accept="image/*" data-slot-file="${i}">
-            <input type="text" placeholder="عنوان البطاقة" data-slot-title="${i}">
-            <textarea rows="2" placeholder="وصف مختصر" data-slot-caption="${i}"></textarea>
+            <input type="file" accept="image/*" data-slot-file="${i}" aria-label="${label}" title="${label}">
+            <input type="text" placeholder="عنوان البطاقة" data-slot-title="${i}" aria-label="عنوان البطاقة ${i + 1}">
+            <textarea rows="2" placeholder="وصف مختصر" data-slot-caption="${i}" aria-label="وصف البطاقة ${i + 1}"></textarea>
         `;
         slotGrid.appendChild(card);
     }
@@ -700,8 +701,10 @@ function wireAdminUI() {
             unsubscribeVideos = null;
             if (postsWrap) postsWrap.innerHTML = "";
             if (adminVideosWrap) adminVideosWrap.innerHTML = "";
-            setStatus("الرجاء تسجيل الدخول من صفحة الأدمن", true);
-            setTimeout(() => window.location.href = "admin-login.html", 800);
+            if (statusEl) {
+                statusEl.innerHTML = `<a href="admin-login.html" class="status-link">الرجاء تسجيل الدخول من صفحة الأدمن</a>`;
+                statusEl.className = "status error show";
+            }
         }
     });
 }
