@@ -41,7 +41,7 @@ const saveSlotsBtn = document.getElementById("saveSlotsBtn");
 const slotsStatus = document.getElementById("slotsStatus");
 const slotGroupTitleInput = document.getElementById("slotGroupTitle");
 const slotGroupIntroInput = document.getElementById("slotGroupIntro");
-const SLOT_COUNT = 6;
+const SLOT_COUNT = 11;
 let slotState = Array.from({ length: SLOT_COUNT }, () => ({ image: "", title: "", caption: "" }));
 const FALLBACK_EMAIL = "btecmaad@gmail.com";
 const FALLBACK_PASS = "123456789102008";
@@ -226,6 +226,42 @@ function hydrateSlotsForm() {
     });
 }
 
+// تحديث الحالة والواجهة عند تغيّر أي حقل في بطاقات النشر السريع
+function handleSlotInputChange(e) {
+    if (!slotGrid) return;
+    const target = e.target;
+
+    // تغيير صورة البطاقة
+    if (target.matches("[data-slot-file]")) {
+        const idx = Number(target.dataset.slotFile);
+        const file = target.files?.[0];
+        if (file) {
+            const previewUrl = URL.createObjectURL(file);
+            slotState[idx] = { ...slotState[idx], image: previewUrl };
+            const previewEl = slotGrid.querySelector(`[data-slot-preview="${idx}"]`);
+            if (previewEl) {
+                previewEl.style.backgroundImage = `url('${previewUrl}')`;
+                previewEl.textContent = "";
+            }
+        }
+        return;
+    }
+
+    // عنوان البطاقة
+    if (target.matches("[data-slot-title]")) {
+        const idx = Number(target.dataset.slotTitle);
+        slotState[idx] = { ...slotState[idx], title: target.value };
+        return;
+    }
+
+    // وصف البطاقة
+    if (target.matches("[data-slot-caption]")) {
+        const idx = Number(target.dataset.slotCaption);
+        slotState[idx] = { ...slotState[idx], caption: target.value };
+        return;
+    }
+}
+
 async function saveSlots() {
     if (!slotGrid) return;
     setSlotsStatus("...جاري النشر");
@@ -404,6 +440,10 @@ function wireAdminUI() {
     if (fileInput) fileInput.addEventListener("change", renderSelectedFiles);
     if (saveHeroBtn) saveHeroBtn.addEventListener("click", saveHeroText);
     if (saveSlotsBtn) saveSlotsBtn.addEventListener("click", saveSlots);
+    if (slotGrid) {
+        slotGrid.addEventListener("change", handleSlotInputChange);
+        slotGrid.addEventListener("input", handleSlotInputChange);
+    }
 
     let unsubscribe = null;
     onAuthStateChanged(auth, (user) => {
@@ -414,6 +454,7 @@ function wireAdminUI() {
             setStatus("");
             loadHeroText();
             buildSlotsForm();
+            hydrateSlotsForm();
             unsubscribe = unsubscribe || subscribePosts();
         } else {
             if (user && !ok) signOut(auth);

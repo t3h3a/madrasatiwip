@@ -1,19 +1,25 @@
 .admin-shell {
     min-height: 100vh;
-    background: radial-gradient(circle at 20% 20%, rgba(37,99,235,.08), transparent 25%), radial-gradient(circle at 80% 0%, rgba(249,115,22,.08), transparent 20%), #f7f9ff;
-    color: #0f172a;
     padding: 48px 16px 64px;
+    background:
+        radial-gradient(circle at 20% 15%, rgba(59, 130, 246, 0.18), transparent 28%),
+        radial-gradient(circle at 80% 5%, rgba(249, 115, 22, 0.18), transparent 24%),
+        linear-gradient(160deg, #0b1020, #0b1224 55%, #0a0f1d);
+    color: #e2e8f0;
 }
 
 .admin-card {
     max-width: 960px;
     margin: 0 auto;
-    background: #ffffff;
+    background: rgba(17, 24, 39, 0.7);
     border-radius: 18px;
-    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.04);
     padding: 24px;
     display: grid;
     gap: 16px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #e5e7eb;
 }
 
 .admin-card--panel {
@@ -34,7 +40,7 @@
 
 .admin-header p {
     margin: 4px 0 0;
-    color: #475569;
+    color: #cbd5e1;
     font-size: 14px;
 }
 
@@ -46,7 +52,9 @@
 .admin-form textarea {
     padding: 12px;
     border-radius: 12px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: #e5e7eb;
     font-size: 15px;
     resize: vertical;
 }
@@ -59,12 +67,20 @@
 }
 
 .card-block {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: rgba(15, 23, 42, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 14px;
     padding: 16px;
     display: grid;
     gap: 12px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease;
+}
+
+.card-block:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .block-title h2 {
@@ -77,34 +93,75 @@
 
 .block-title p {
     margin: 4px 0 0;
-    color: #64748b;
+    color: #cbd5e1;
     font-size: 14px;
+}
+
+/* حقول عامة داخل كروت الأدمن (تشمل عناوين/أوصاف المجموعة) */
+.card-block input,
+.card-block textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    color: #e5e7eb;
+    font-size: 15px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.card-block input::placeholder,
+.card-block textarea::placeholder {
+    color: #9ca3af;
+}
+
+.card-block input:focus,
+.card-block textarea:focus {
+    outline: none;
+    border-color: rgba(96, 165, 250, 0.85);
+    box-shadow: 0 0 0 3px rgba(96,165,250,0.22);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .slot-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    margin-top: 10px;
 }
 
 .slot-card {
-    border: 1px dashed #cbd5e1;
-    border-radius: 14px;
-    padding: 12px;
-    background: #f8fafc;
+    border: 1px dashed rgba(255, 255, 255, 0.28);
+    border-radius: 16px;
+    padding: 14px;
+    background: linear-gradient(145deg, rgba(17, 24, 39, 0.94), rgba(21, 32, 56, 0.9));
     display: grid;
     gap: 10px;
+    color: #e5e7eb;
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease;
+}
+
+.slot-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(96, 165, 250, 0.8);
+    box-shadow: 0 22px 38px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 .slot-preview {
     width: 100%;
     aspect-ratio: 4 / 3;
     border-radius: 12px;
-    background: #e2e8f0 center/cover no-repeat;
+    background: linear-gradient(145deg, #24365e, #2b2f68 55%, #2d1f52);
+    background-size: cover;
+    background-position: center;
     display: grid;
     place-items: center;
-    color: #475569;
-    font-weight: 700;
+    color: #e8ecf5;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
 .slot-card input[type="text"],
@@ -123,13 +180,129 @@
     display: grid;
     gap: 6px;
     font-weight: 600;
+    color: #e2e8f0;
 }
 
 .admin-form input {
-    padding: 12px;
+    padding: 13px;
     border-radius: 12px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
     font-size: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #e5e7eb;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.admin-form input::placeholder,
+.admin-form textarea::placeholder {
+    color: #94a3b8;
+}
+
+.admin-form input:focus,
+.admin-form textarea:focus {
+    outline: none;
+    border-color: rgba(96, 165, 250, 0.9);
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.admin-form textarea {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #e5e7eb;
+    min-height: 90px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.admin-form input[type="file"] {
+    border-style: dashed;
+    cursor: pointer;
+    font-weight: 700;
+    color: #e5e7eb;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 11px;
+}
+
+.admin-form input[type="file"]:hover {
+    border-color: rgba(96, 165, 250, 0.9);
+    background: rgba(255, 255, 255, 0.09);
+}
+
+.admin-form input[type="file"]::file-selector-button {
+    border: none;
+    border-radius: 10px;
+    padding: 11px 14px;
+    margin-inline-end: 10px;
+    background: linear-gradient(135deg, #6d28d9, #4338ca, #2563eb);
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(59,130,246,0.35);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.admin-form input[type="file"]::file-selector-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 24px rgba(79,70,229,0.42);
+    filter: brightness(1.04);
+}
+
+.admin-form input[type="file"]::file-selector-button:active {
+    transform: translateY(0);
+    box-shadow: 0 10px 18px rgba(79,70,229,0.35);
+}
+
+/* تطبيق نفس شكل رفع الملفات على كروت السلات */
+.card-block input[type="file"] {
+    border-style: dashed;
+    cursor: pointer;
+    font-weight: 700;
+    color: #e5e7eb;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 11px;
+}
+
+.card-block input[type="file"]:hover {
+    border-color: rgba(96, 165, 250, 0.9);
+    background: rgba(255, 255, 255, 0.09);
+}
+
+.card-block input[type="file"]::file-selector-button {
+    border: none;
+    border-radius: 10px;
+    padding: 11px 14px;
+    margin-inline-end: 10px;
+    background: linear-gradient(135deg, #6d28d9, #4338ca, #2563eb);
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(59,130,246,0.35);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.card-block input[type="file"]::file-selector-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 24px rgba(79,70,229,0.42);
+    filter: brightness(1.04);
+}
+
+.card-block input[type="file"]::file-selector-button:active {
+    transform: translateY(0);
+    box-shadow: 0 10px 18px rgba(79,70,229,0.35);
+}
+
+.slot-card input,
+.slot-card textarea {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.16);
+    color: #e5e7eb;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.slot-card input:focus,
+.slot-card textarea:focus {
+    border-color: rgba(96, 165, 250, 0.85);
+    box-shadow: 0 0 0 3px rgba(96,165,250,0.25);
 }
 
 .admin-actions {
@@ -143,23 +316,48 @@
     border: none;
     border-radius: 12px;
     cursor: pointer;
-    font-weight: 700;
-    background: linear-gradient(120deg, #2563eb, #1d4ed8);
-    color: #fff;
+    font-weight: 800;
+    background: linear-gradient(120deg, #3b82f6, #2563eb);
+    color: #ffffff;
+    box-shadow: 0 12px 26px rgba(59, 130, 246, 0.28);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.admin-actions button i {
+    margin-left: 6px;
+}
+
+.admin-actions button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 30px rgba(59, 130, 246, 0.35);
+    filter: brightness(1.02);
+}
+
+.admin-actions button:active {
+    transform: translateY(0);
+    box-shadow: 0 8px 18px rgba(59, 130, 246, 0.28);
 }
 
 .admin-actions .danger {
-    background: #ef4444;
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    box-shadow: 0 12px 26px rgba(239, 68, 68, 0.32);
+}
+
+.admin-actions .ghost {
+    background: rgba(255, 255, 255, 0.06);
+    color: #e5e7eb;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: none;
 }
 
 .status {
     font-size: 14px;
-    color: #16a34a;
+    color: #4ade80;
     min-height: 18px;
 }
 
 .status.error {
-    color: #dc2626;
+    color: #f87171;
 }
 
 .status.show {
@@ -185,29 +383,32 @@
     display: grid;
     gap: 6px;
     padding: 10px;
-    border: 1px dashed #cbd5e1;
+    border: 1px dashed rgba(255, 255, 255, 0.18);
     border-radius: 12px;
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.04);
 }
 
 .file-name {
     font-weight: 700;
-    color: #0f172a;
+    color: #e5e7eb;
 }
 
 .image-caption {
     padding: 10px 12px;
     border-radius: 10px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
     font-size: 14px;
+    color: #cbd5e1;
 }
 
 .admin-post {
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 14px;
     padding: 14px;
-    background: #ffffff;
-    box-shadow: 0 10px 30px rgba(15,23,42,0.08);
+    background: rgba(15, 23, 42, 0.65);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    color: #e5e7eb;
 }
 
 .post-head {
@@ -245,25 +446,30 @@
     aspect-ratio: 4 / 3;
     object-fit: cover;
     border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.28);
 }
 
 .post-gallery figcaption {
     margin-top: 6px;
     font-size: 13px;
-    color: #475569;
+    color: #cbd5e1;
 }
 
 .eyebrow {
-    color: #64748b;
+    color: #94a3b8;
     font-size: 12px;
     margin: 0;
+    letter-spacing: 0.6px;
 }
 
 .admin-login-shell {
     min-height: 100vh;
     display: grid;
     place-items: center;
-    background: linear-gradient(135deg, #0f172a, #1e293b);
+    background:
+        radial-gradient(circle at 12% 10%, rgba(59,130,246,0.18), transparent 25%),
+        radial-gradient(circle at 90% 8%, rgba(16,185,129,0.18), transparent 22%),
+        linear-gradient(140deg, #0a0f1d, #0d1428 60%, #0b1020);
     color: #f8fafc;
     padding: 16px;
 }
@@ -271,12 +477,14 @@
 .admin-login-card {
     width: 100%;
     max-width: 420px;
-    background: #0b1220;
+    background: rgba(15, 23, 42, 0.78);
     border-radius: 18px;
     padding: 24px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 26px 70px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255,255,255,0.06);
     display: grid;
     gap: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.08);
 }
 
 .admin-login-card h1 {
@@ -288,14 +496,22 @@
     display: grid;
     gap: 6px;
     font-weight: 600;
+    color: #e5e7eb;
 }
 
 .admin-login-card input {
     padding: 12px;
     border-radius: 12px;
-    border: 1px solid #1f2937;
-    background: #0f172a;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
     color: #f8fafc;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-login-card input:focus {
+    outline: none;
+    border-color: rgba(34, 197, 94, 0.9);
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.25);
 }
 
 .admin-login-card button {
@@ -306,11 +522,24 @@
     color: #0b1220;
     cursor: pointer;
     font-weight: 800;
+    box-shadow: 0 16px 32px rgba(22, 165, 96, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.admin-login-card button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 20px 36px rgba(22, 165, 96, 0.42);
+    filter: brightness(1.03);
+}
+
+.admin-login-card button:active {
+    transform: translateY(0);
+    box-shadow: 0 12px 26px rgba(22, 165, 96, 0.35);
 }
 
 .admin-login-card .muted {
     margin: 0;
-    color: #94a3b8;
+    color: #a5b4c5;
     font-size: 14px;
 }
 

@@ -332,6 +332,53 @@ input, textarea, select {
 [data-theme="dark"] .ai-chat-container {
     background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(15,23,42,0.95)) !important;
 }
+
+/* وضع داكن لصفحة الإعدادات */
+[data-theme="dark"] .settings-shell {
+    background: linear-gradient(180deg, var(--bg-primary, #000000), var(--bg-tertiary, #111827)) !important;
+    color: var(--text-primary, #ffffff) !important;
+}
+
+[data-theme="dark"] .settings-hero,
+[data-theme="dark"] .settings-card {
+    background: var(--bg-secondary, #0d1117) !important;
+    border-color: var(--border-color, rgba(255,255,255,0.12)) !important;
+    box-shadow: 0 14px 32px rgba(0,0,0,0.4) !important;
+    color: var(--text-primary, #ffffff) !important;
+}
+
+[data-theme="dark"] .settings-hero .lead,
+[data-theme="dark"] .muted,
+[data-theme="dark"] .settings-card .muted {
+    color: var(--text-secondary, #cbd5e1) !important;
+}
+
+[data-theme="dark"] .settings-hero .eyebrow,
+[data-theme="dark"] .settings-card .eyebrow,
+[data-theme="dark"] .settings-card .tag {
+    color: var(--text-muted, #cbd5e1) !important;
+}
+
+[data-theme="dark"] .settings-card .tag {
+    background: var(--accent-soft, rgba(37,99,235,0.18)) !important;
+}
+
+[data-theme="dark"] .palette-card {
+    background: var(--bg-tertiary, #111827) !important;
+    border-color: var(--border-color, rgba(255,255,255,0.15)) !important;
+    color: var(--text-primary, #ffffff) !important;
+}
+
+[data-theme="dark"] .language-switch button {
+    background: var(--bg-tertiary, #111827) !important;
+    color: var(--text-primary, #ffffff) !important;
+    border-color: var(--border-color, rgba(255,255,255,0.15)) !important;
+}
+
+[data-theme="dark"] .language-switch button.active {
+    background: var(--accent-primary, #2563eb) !important;
+    color: #fff !important;
+}
 /* (keyword classes moved to style.css for global scope) */
 
 /* الصفحة الرئيسية في الوضع الداكن */

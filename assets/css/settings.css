@@ -5,6 +5,7 @@
 .settings-shell {
     padding: 80px 0 90px;
     background: linear-gradient(180deg, var(--bg-gradient-from, #f7f9ff), var(--bg-gradient-to, #eef2ff));
+    color: var(--text-primary, #0f172a);
 }
 
 .settings-hero {
@@ -30,12 +31,12 @@
 .settings-hero h1 {
     margin: 0 0 10px;
     font-size: 2.1rem;
-    color: #0f172a;
+    color: var(--text-primary, #0f172a);
 }
 
 .settings-hero .lead {
     margin: 0;
-    color: #475569;
+    color: var(--text-secondary, #475569);
     line-height: 1.8;
 }
 
@@ -61,8 +62,9 @@
     background: var(--surface-card, #fff);
     border-radius: var(--settings-card-radius);
     box-shadow: 0 12px 26px rgba(15,23,42,0.08);
-    border: 1px solid rgba(0,0,0,0.04);
+    border: 1px solid var(--border-color, rgba(0,0,0,0.04));
     padding: 18px;
+    color: var(--text-primary, #0f172a);
 }
 
 .card-head {
@@ -75,14 +77,14 @@
 .card-head h2 {
     margin: 0;
     font-size: 1.25rem;
-    color: #0f172a;
+    color: var(--text-primary, #0f172a);
 }
 
 .eyebrow {
     margin: 0;
     font-size: 0.9rem;
     letter-spacing: 1px;
-    color: #94a3b8;
+    color: var(--text-muted, #94a3b8);
 }
 
 .tag {
@@ -95,7 +97,7 @@
 }
 
 .muted {
-    color: #475569;
+    color: var(--text-secondary, #475569);
     margin: 10px 0 14px;
     line-height: 1.6;
 }

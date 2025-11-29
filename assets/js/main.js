@@ -115,8 +115,8 @@ const translations = {
         "videos.subtitle": "فيديوهات تساعدك تفهم نظام BTEC من الطلاب ومعلمي الاختصاص.",
         "videos.card1.title": "🔶 فيديو تعريفي عن تخصص الضيافة",
         "videos.card1.desc": "شرح بسيط عن المسار، وين بيشتغل الطالب، ومحتوى الدروس العملية والنظرية.",
-        "videos.card2.title": "💻 رأي طلاب IT في نظام BTEC",
-        "videos.card2.desc": "طلاب IT يشرحون تجربتهم مع المشاريع وكيف ساعدهم النظام يطوّروا مهاراتهم.",
+        "videos.card2.title": "💻 رأي طالب IT في نظام BTEC",
+        "videos.card2.desc": "طالب IT يشرح تجربته مع نظام BTEC وكيف ساعده يطوّر مهاراته.",
         "videos.card3.title": "🚀 مشاريع طلاب BTEC",
         "videos.card3.desc": "عرض سريع لأفضل مشاريع نظام BTEC في المدرسة.",
         "settings.title": "الإعدادات",
@@ -198,8 +198,8 @@ const translations = {
         "videos.subtitle": "Clips that help you understand the BTEC system from students and teachers.",
         "videos.card1.title": "🔶 Intro to Hospitality",
         "videos.card1.desc": "A short overview of the track, workplaces, and course content.",
-        "videos.card2.title": "💻 IT students talk BTEC",
-        "videos.card2.desc": "How IT students used projects to grow their skills.",
+        "videos.card2.title": "💻 IT student talks BTEC",
+        "videos.card2.desc": "How one IT student used projects to grow his skills.",
         "videos.card3.title": "🚀 BTEC student projects",
         "videos.card3.desc": "A quick tour of standout BTEC projects at school.",
         "settings.title": "Settings",
@@ -280,13 +280,16 @@ function applyColorScheme(schemeKey) {
     });
 }
 
-function applyLanguage(lang) {
-    const targetLang = lang === "en" ? "en" : "ar";
+function applyLanguage() {
+    const targetLang = "ar"; // تثبيت الواجهة على العربية فقط
     document.documentElement.lang = targetLang;
-    document.documentElement.dir = targetLang === "en" ? "ltr" : "rtl";
+    document.documentElement.dir = "rtl";
     document.body.setAttribute("data-lang", targetLang);
     localStorage.setItem("appLanguage", targetLang);
-    applyGoogleTranslate(targetLang);
+
+    // تنظيف أي ترجمة أو كوكيز سابقة
+    clearTranslateCookie();
+    removeGoogleTranslateArtifacts();
 
     document.querySelectorAll("[data-i18n], [data-i18n-placeholder], [data-i18n-label], [data-i18n-title]").forEach(el => {
         const key = el.dataset.i18n;
@@ -310,10 +313,11 @@ function applyLanguage(lang) {
         }
     });
 
-    document.querySelectorAll(".language-switch button").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.lang === targetLang);
-    });
+    // لا يوجد أزرار لغة بعد الآن
 }
+
+// تطبيق اللغة العربية مباشرة
+applyLanguage();
 
 /* ===================== Google Translate (ar/en) ===================== */
 let googleScriptRequested = false;
@@ -329,10 +333,23 @@ function setTranslateCookie(lang) {
 }
 
 function applyGoogleTranslate(lang) {
-    const target = lang === "en" ? "en" : "ar";
-    setTranslateCookie(target);
-    if (target === "ar") return;
-    loadGoogleTranslate();
+    // إبقاء هذه الدالة فارغة للاحتياط (لا نحمّل ترجمة جوجل تلقائياً)
+}
+
+function clearTranslateCookie() {
+    const domain = window.location.hostname;
+    const expired = "Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = `googtrans=;expires=${expired};path=/;`;
+    if (domain && domain !== "localhost") {
+        document.cookie = `googtrans=;expires=${expired};domain=${domain};path=/;`;
+    }
+}
+
+function removeGoogleTranslateArtifacts() {
+    document.querySelectorAll(".goog-te-banner-frame, .goog-te-gadget, .skiptranslate").forEach(el => {
+        el.style.display = "none";
+    });
+    document.body.style.top = "0px";
 }
 
 function loadGoogleTranslate() {
@@ -363,14 +380,9 @@ function initSettingsPage() {
     if (document.body.dataset.page !== "settings") return;
 
     const paletteCards = document.querySelectorAll("[data-color-scheme]");
-    const langButtons = document.querySelectorAll(".settings-lang button");
 
     paletteCards.forEach(card => {
         card.addEventListener("click", () => applyColorScheme(card.dataset.colorScheme));
-    });
-
-    langButtons.forEach(btn => {
-        btn.addEventListener("click", () => applyLanguage(btn.dataset.lang || "ar"));
     });
 }
 
@@ -380,10 +392,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // التحكم في حجم الخط (صغير / عادي / كبير / كبير جداً) مع حفظ الإعداد
     const fontSizes = ["small", "medium", "large", "xlarge"];
     const storedFont = localStorage.getItem("fontSizePreference") || "medium";
-    const storedLang = localStorage.getItem("appLanguage") || document.documentElement.lang || "ar";
+    const storedLang = "ar";
     const storedScheme = localStorage.getItem("colorSchemePreference") || "classic";
 
-    applyLanguage(storedLang);
+    applyLanguage();
     applyColorScheme(storedScheme);
 
     // حاوية مخفية لترجمة جوجل إن لم تكن موجودة
